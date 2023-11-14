@@ -13,10 +13,10 @@ namespace DemosPlus.Json
     public class JsonPricesAvg
     {
         [JsonProperty("location")]
-        public City city { get; set; }
+        public string city { get; set; }
 
         [JsonProperty("item_id")]
-        public Item item { get; set; }
+        public string item { get; set; }
 
         [JsonProperty("quality")]
         public int quality { get; set; }
@@ -27,8 +27,18 @@ namespace DemosPlus.Json
 
     [JsonConverter(typeof(JsonPathConverter))]
     public class JsonBuyMaxPrices
-    { 
-    
+    {
+        [JsonProperty("location")]
+        public string city { get; set; }
+
+        [JsonProperty("item_id")]
+        public string item { get; set; }
+
+        [JsonProperty("quality")]
+        public int quality { get; set; }
+
+        [JsonProperty("buy_price_max")]
+        public int buy_price_max { get; set; }
     }
 
     public partial class JsonManager
@@ -38,7 +48,10 @@ namespace DemosPlus.Json
             return JsonConvert.DeserializeObject<List<JsonPricesAvg>>(json);
         }
 
-        public static List<>
+        public static List<JsonBuyMaxPrices> GetBuyMaxPrices(string json)
+        {
+            return JsonConvert.DeserializeObject<List<JsonBuyMaxPrices>>(json);
+        }
 
     }
 

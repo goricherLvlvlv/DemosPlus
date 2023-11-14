@@ -9,108 +9,70 @@ using System.Threading.Tasks;
 
 namespace DemosPlus.Json
 {
+    [JsonConverter(typeof(JsonPathConverter))]
     public class JsonPricesAvg
     {
-        public City city;
-        public Item item;
-        public List<double> prices;
+        [JsonProperty("location")]
+        public City city { get; set; }
 
-        public override string ToString()
-        {
-            StringBuilder sb = new StringBuilder($"{city} {item}\n");
-            for (int i = 0; i < prices.Count; ++i)
-            {
-                if (i % 3 != 0)
-                { 
-                    sb.Append(' ');
-                }
-                sb.Append(prices[i].ToString());
+        [JsonProperty("item_id")]
+        public Item item { get; set; }
 
-                if ((i + 1) % 3 == 0)
-                {
-                    sb.Append('\n');
-                }
-            }
+        [JsonProperty("quality")]
+        public int quality { get; set; }
 
-            return sb.ToString();
-        }
+        [JsonProperty("data.prices_avg")]
+        public List<double> prices_avg { get; set; }
+    }
+
+    [JsonConverter(typeof(JsonPathConverter))]
+    public class JsonBuyMaxPrices
+    { 
+    
     }
 
     public partial class JsonManager
     {
         public static List<JsonPricesAvg> GetPricesAvg(string json)
         {
-            var root = JsonConvert.DeserializeObject(json) as JArray;
-            if (root == null || root.Count <= 0)
-            {
-                return null;
-            }
-
-            var result = new List<JsonPricesAvg>();
-
-            for (int i = 0; i < root.Count; ++i)
-            {
-                if (!(root[i] is JObject jobject))
-                {
-                    continue;
-                }
-
-                if (!jobject.TryGetValue("data", out var data) || !(data is JObject dataObject))
-                {
-                    continue;
-                }
-
-                City cityEnum = City.None;
-                if (jobject.TryGetValue("location", out var city) && city is JValue cityValue)
-                {
-                    cityEnum = ConvertCity((string)cityValue.Value);
-                }
-
-                Item itemEnum = Item.None;
-                if (jobject.TryGetValue("item_id", out var item) && item is JValue itemValue)
-                {
-                    itemEnum = ConvertItem((string)itemValue.Value);
-                }
-
-                if (!dataObject.TryGetValue("prices_avg", out var pricesAvg) || !(pricesAvg is JArray pricesAvgArray))
-                {
-                    continue;
-                }
-
-                var prices = new List<double>();
-
-                for (int j = 0; j < pricesAvgArray.Count; ++j)
-                {
-                    if (!(pricesAvgArray[j] is JValue value))
-                    {
-                        continue;
-                    }
-
-                    prices.Add((double)value.Value);
-                }
-
-                result.Add(new JsonPricesAvg()
-                {
-                    city = cityEnum,
-                    item = itemEnum,
-                    prices = prices,
-                });
-            }
-
-            return result;
+            return JsonConvert.DeserializeObject<List<JsonPricesAvg>>(json);
         }
 
-        private static Item ConvertItem(string item)
-        {
-            Enum.TryParse<Item>(item, out var result);
-            return result;
-        }
-
-        private static City ConvertCity(string city)
-        {
-            Enum.TryParse<City>(city, out var result);
-            return result;
-        }
+        public static List<>
 
     }
+
+    public class JsonPathConverter : JsonConverter
+    {
+        public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
+        {
+            var jo = JObject.Load(reader);
+            var targetObj = Activator.CreateInstance(objectType);
+
+            foreach (var prop in objectType.GetProperties().Where(p => p.CanRead && p.CanWrite))
+            {
+                var att = prop.GetCustomAttributes(true).OfType<JsonPropertyAttribute>().FirstOrDefault();
+
+                var jsonPath = (att != null ? att.PropertyName : prop.Name);
+                var token = jo.SelectToken(jsonPath);
+
+                if (token == null || token.Type == JTokenType.Null) continue;
+
+                var value = token.ToObject(prop.PropertyType, serializer);
+                prop.SetValue(targetObj, value, null);
+            }
+
+            return targetObj;
+        }
+
+        public override bool CanConvert(Type objectType) => false;
+
+        public override bool CanWrite => false;
+
+        public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
 }

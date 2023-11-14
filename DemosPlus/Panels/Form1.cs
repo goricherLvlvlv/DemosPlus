@@ -31,7 +31,7 @@ namespace DemosPlus
                 new List<Item> { Item.T4_PLANKS, Item.T5_PLANKS },
                 new List<City> { City.Caerleon, City.Thetford },
                 new UrlDate
-                { 
+                {
                     day = 9,
                     month = 11,
                     year = 2023,
@@ -41,7 +41,8 @@ namespace DemosPlus
                     day = 11,
                     month = 11,
                     year = 2023,
-                });
+                },
+                Quality.None);
 
             var result = QNetwork.Instance.GetResult(url);
             var avg = JsonManager.GetPricesAvg(result);

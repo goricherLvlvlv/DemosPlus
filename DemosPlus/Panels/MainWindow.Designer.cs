@@ -49,12 +49,12 @@ namespace DemosPlus
             this.btnRun.TabIndex = 0;
             this.btnRun.Text = "开始计算";
             this.btnRun.UseVisualStyleBackColor = true;
-            this.btnRun.Click += new System.EventHandler(this.TestBtn_Click);
+            this.btnRun.Click += new System.EventHandler(this.OnClickCalculate);
             // 
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(928, 421);
+            this.label1.Location = new System.Drawing.Point(374, 32);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(41, 12);
             this.label1.TabIndex = 1;

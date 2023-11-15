@@ -57,4 +57,13 @@ namespace DemosPlus
         Tax_8_25,
     }
 
+    public class Const
+    {
+        public const string ItemPath = "Resources/Item.txt";
+        public const string ItemNamePath = "Resources/ItemName.txt";
+
+        public const string Url_Prices_Avg = "https://west.albion-online-data.com/api/v2/stats/charts/";
+        public const string Url_Buy_Max_Prices = "https://west.albion-online-data.com/api/v2/stats/prices/";
+    }
+
 }

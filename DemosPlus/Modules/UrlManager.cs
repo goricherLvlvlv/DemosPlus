@@ -22,8 +22,7 @@ namespace DemosPlus.Modules
 
     public class UrlManager : IModule
     {
-        private const string Url_Prices_Avg = "https://west.albion-online-data.com/api/v2/stats/charts/";
-        private const string Url_Buy_Max_Prices = "https://west.albion-online-data.com/api/v2/stats/prices/";
+
 
         public void OnResolve()
         {
@@ -33,10 +32,10 @@ namespace DemosPlus.Modules
         {
         }
 
-        public string GetPricesAvgUrl(List<Item> items, List<City> citys, UrlDate? startDate, UrlDate? endDate, Quality quality)
+        public string GetPricesAvgUrl(List<string> items, List<City> citys, UrlDate? startDate, UrlDate? endDate, Quality quality)
         {
             StringBuilder url = new StringBuilder();
-            url.Append(Url_Prices_Avg);
+            url.Append(Const.Url_Prices_Avg);
             AddItemParam(url, items);
 
             bool hasFirstParam = false;
@@ -48,10 +47,10 @@ namespace DemosPlus.Modules
             return url.ToString();
         }
 
-        public string GetBuyMaxPricesUrl(List<Item> items, List<City> citys, UrlDate? startDate, UrlDate? endDate, Quality quality)
+        public string GetBuyMaxPricesUrl(List<string> items, List<City> citys, UrlDate? startDate, UrlDate? endDate, Quality quality)
         {
             StringBuilder url = new StringBuilder();
-            url.Append(Url_Buy_Max_Prices);
+            url.Append(Const.Url_Buy_Max_Prices);
             AddItemParam(url, items);
 
             bool hasFirstParam = false;
@@ -63,7 +62,7 @@ namespace DemosPlus.Modules
             return url.ToString();
         }
 
-        private void AddItemParam(StringBuilder url, List<Item> items)
+        private void AddItemParam(StringBuilder url, List<string> items)
         {
             for (int i = 0; i < items.Count; ++i)
             {

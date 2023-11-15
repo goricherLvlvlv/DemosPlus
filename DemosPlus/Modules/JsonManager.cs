@@ -1,5 +1,4 @@
-﻿using DemosPlus.Url;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
@@ -7,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DemosPlus.Json
+namespace DemosPlus.Modules
 {
     [JsonConverter(typeof(JsonPathConverter))]
     public class JsonPricesAvg
@@ -41,19 +40,29 @@ namespace DemosPlus.Json
         public int buy_price_max { get; set; }
     }
 
-    public partial class JsonManager
+    public class JsonManager : IModule
     {
-        public static List<JsonPricesAvg> GetPricesAvg(string json)
+        public void OnResolve()
+        {
+        }
+
+        public void OnDestroy()
+        {
+        }
+
+        public List<JsonPricesAvg> GetPricesAvg(string json)
         {
             return JsonConvert.DeserializeObject<List<JsonPricesAvg>>(json);
         }
 
-        public static List<JsonBuyMaxPrices> GetBuyMaxPrices(string json)
+        public List<JsonBuyMaxPrices> GetBuyMaxPrices(string json)
         {
             return JsonConvert.DeserializeObject<List<JsonBuyMaxPrices>>(json);
         }
 
     }
+
+    public class QJsonManager : Query<JsonManager> { }
 
     public class JsonPathConverter : JsonConverter
     {

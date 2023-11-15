@@ -8,8 +8,18 @@ using System.Threading.Tasks;
 
 namespace DemosPlus.Modules
 {
-    public class Network
+    public class Network : IModule
     {
+        public void OnResolve()
+        { 
+        
+        }
+
+        public void OnDestroy()
+        { 
+        
+        }
+
         public string GetResult(string url)
         {
             Uri uri = new Uri(url);

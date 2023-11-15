@@ -68,7 +68,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Const\Constance.cs" />
-    <Compile Include="JsonManager\Json_PricesAvg.cs" />
+    <Compile Include="Modules\ExcelUtil.cs" />
+    <Compile Include="Modules\IModule.cs" />
+    <Compile Include="Modules\JsonManager.cs" />
     <Compile Include="Modules\Network.cs" />
     <Compile Include="Modules\Query.cs" />
     <Compile Include="Panels\MainWindow.cs">
@@ -79,7 +81,7 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="UrlManager\UrlManager.cs" />
+    <Compile Include="Modules\UrlManager.cs" />
     <EmbeddedResource Include="Panels\MainWindow.resx">
       <DependentUpon>MainWindow.cs</DependentUpon>
     </EmbeddedResource>
@@ -105,6 +107,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Resources\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

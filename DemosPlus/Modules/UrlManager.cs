@@ -6,7 +6,7 @@ using System.Security.Policy;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DemosPlus.Url
+namespace DemosPlus.Modules
 {
     public struct UrlDate
     {
@@ -20,10 +20,18 @@ namespace DemosPlus.Url
         }
     }
 
-    public class UrlManager
+    public class UrlManager : IModule
     {
         private const string Url_Prices_Avg = "https://west.albion-online-data.com/api/v2/stats/charts/";
         private const string Url_Buy_Max_Prices = "https://west.albion-online-data.com/api/v2/stats/prices/";
+
+        public void OnResolve()
+        {
+        }
+
+        public void OnDestroy()
+        {
+        }
 
         public string GetPricesAvgUrl(List<Item> items, List<City> citys, UrlDate? startDate, UrlDate? endDate, Quality quality)
         {

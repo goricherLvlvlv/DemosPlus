@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace DemosPlus.Modules
 {
-    public class Query<T> where T : new()
+    public class Query<T> where T : IModule, new()
     {
         private static T _instance;
 
@@ -17,6 +17,7 @@ namespace DemosPlus.Modules
                 if (_instance == null)
                 {
                     _instance = new T();
+                    _instance.OnResolve();
                 }
 
                 return _instance;

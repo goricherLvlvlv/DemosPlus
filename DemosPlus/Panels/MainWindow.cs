@@ -1,5 +1,4 @@
 ﻿using DemosPlus.Modules;
-using DemosPlus.Json;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
@@ -13,7 +12,6 @@ using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using DemosPlus.Url;
 
 namespace DemosPlus
 {
@@ -88,7 +86,7 @@ namespace DemosPlus
                 Quality.None);
 
             var result = QNetwork.Instance.GetResult(url);
-            var avg = JsonManager.GetPricesAvg(result);
+            var avg = QJsonManager.Instance.GetPricesAvg(result);
 
             url = QUrlManager.Instance.GetBuyMaxPricesUrl(
                 new List<Item> { Item.T4_PLANKS, Item.T5_PLANKS },
@@ -107,7 +105,7 @@ namespace DemosPlus
                 },
                 Quality.None);
             result = QNetwork.Instance.GetResult(url);
-            var max = JsonManager.GetBuyMaxPrices(result);
+            var max = QJsonManager.Instance.GetBuyMaxPrices(result);
 
             var label = "";
             foreach (var a in max)

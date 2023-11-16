@@ -25,11 +25,19 @@ namespace DemosPlus.Modules
             Uri uri = new Uri(url);
             HttpWebRequest request = WebRequest.CreateHttp(uri);
 
-            var respon = request.GetResponse();
-            var stream = respon.GetResponseStream();
+            string result;
+            try
+            {
+                var respon = request.GetResponse();
+                var stream = respon.GetResponseStream();
 
-            StreamReader reader = new StreamReader(stream);
-            var result = reader.ReadToEnd();
+                StreamReader reader = new StreamReader(stream);
+                result = reader.ReadToEnd();
+            }
+            finally
+            { 
+                // do nothing
+            }
 
             return result;
         }

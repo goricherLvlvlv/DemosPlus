@@ -22,6 +22,14 @@ namespace DemosPlus.Modules
 
         [JsonProperty("data.prices_avg")]
         public List<double> prices_avg { get; set; }
+
+        public double GetAverage()
+        {
+            double sum = 0d;
+            foreach (var price in prices_avg) sum += price;
+            return prices_avg.Count != 0 ? sum / prices_avg.Count : sum;
+        }
+
     }
 
     [JsonConverter(typeof(JsonPathConverter))]

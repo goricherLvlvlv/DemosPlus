@@ -39,7 +39,7 @@ namespace DemosPlus.Modules
             AddItemParam(url, items);
 
             bool hasFirstParam = false;
-            AddCityParam(url, citys, ref hasFirstParam);
+            //AddCityParam(url, citys, ref hasFirstParam);
             AppendStartDateParam(url, startDate, ref hasFirstParam);
             AppendEndDateParam(url, endDate, ref hasFirstParam);
             AppendQualityParam(url, quality, ref hasFirstParam);
@@ -54,7 +54,7 @@ namespace DemosPlus.Modules
             AddItemParam(url, items);
 
             bool hasFirstParam = false;
-            AddCityParam(url, citys, ref hasFirstParam);
+            //AddCityParam(url, citys, ref hasFirstParam);
             AppendStartDateParam(url, startDate, ref hasFirstParam);
             AppendEndDateParam(url, endDate, ref hasFirstParam);
             AppendQualityParam(url, quality, ref hasFirstParam);
@@ -74,6 +74,9 @@ namespace DemosPlus.Modules
             }
         }
 
+        /// <summary>
+        /// 会有portal, 直接不加城市限制
+        /// </summary>
         private void AddCityParam(StringBuilder url, List<City> citys, ref bool hasFirstParam)
         {
             if (citys.Count > 0)

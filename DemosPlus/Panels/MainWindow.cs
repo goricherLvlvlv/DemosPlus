@@ -58,7 +58,11 @@ namespace DemosPlus
 
         private List<string> GetItems(string itemKey)
         {
-            var (tierMin, tierMax, enchantMin, enchantMax) = QExcelUtil.Instance.GetValues(itemKey);
+            var item = QExcelUtil.Instance.GetItem(itemKey);
+            int tierMin = item.tierMin;
+            int tierMax = item.tierMax;
+            int enchantMin = item.enchantMin;
+            int enchantMax = item.enchantMax;
 
             List<(string name, bool hasEnchant)> tiers = new List<(string, bool)>();
             List<string> result = new List<string>();
@@ -99,7 +103,7 @@ namespace DemosPlus
                     for (int j = enchantMin; j <= enchantMax; ++j)
                     {
                         var name = tiers[i].name;
-                        name += $"{(enchantType == 1 ? $"@{j}" : $"_LEVEL{j}@{j}")}";
+                        name += $"{(enchantType == EnchantType.JustAt ? $"@{j}" : $"_LEVEL{j}@{j}")}";
                         result.Add(name);
                     }
                 }
@@ -111,7 +115,7 @@ namespace DemosPlus
 
         private List<City> GetCitys()
         {
-            return new List<City> { City.Thetford, City.BridgeWatch, City.Martlock, City.Lymhurst, City.FortSterling, City.Caerleon };
+            return new List<City> { City.Thetford, City.BridgeWatch, City.Martlock, City.Lymhurst, City.FortSterling, City.Caerleon, City.BlackMarket };
         }
 
         private int GetDays(Duration duration)
@@ -150,7 +154,7 @@ namespace DemosPlus
             return (start, end);
         }
 
-        private Dictionary<(string item, City city), double> ProcessAvg(List<JsonPricesAvg> avgs)
+        private Dictionary<(string item, City city), double> ProcessAvg(List<NetPricesAvg> avgs)
         {
             var map = new Dictionary<(string item, City city), double>();
             var map2 = new Dictionary<(string item, City city), int>();
@@ -195,6 +199,10 @@ namespace DemosPlus
             if (name.Equals("Fort Sterling", StringComparison.OrdinalIgnoreCase))
             {
                 return City.FortSterling;
+            }
+            else if (name.Equals("Black Market", StringComparison.OrdinalIgnoreCase))
+            {
+                return City.BlackMarket;
             }
 
             return City.None;
@@ -269,7 +277,7 @@ namespace DemosPlus
                     {
                         row.Cells[columnIndex].Value = avgPrice.ToString("f2");
 
-                        if (city != City.Caerleon)
+                        if (city != City.Caerleon && city != City.BlackMarket)
                         {
                             sum += avgPrice;
                             ++count;

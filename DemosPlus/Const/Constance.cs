@@ -15,6 +15,7 @@ namespace DemosPlus
         Lymhurst,
         FortSterling,
         Caerleon,
+        BlackMarket,
     }
 
     public enum Item
@@ -43,7 +44,7 @@ namespace DemosPlus
     }
 
     public enum Duration
-    { 
+    {
         OneDay,
         SevenDays,
         TwoWeeks,
@@ -52,13 +53,31 @@ namespace DemosPlus
     }
 
     public enum Tax
-    { 
+    {
         Tax_6_26,
         Tax_8_25,
     }
 
+    public enum ItemType
+    {
+        Consume,
+        Journal,
+        Mount,
+        Gear,
+        Resource,
+        Artifact,
+    }
+
+    public enum EnchantType
+    {
+        None = 0,
+        JustAt = 1,
+        LevelWithAt = 2,
+    }
+
     public class Const
     {
+        public const string ItemTypePath = "Resources/{0}.txt";
         public const string ItemPath = "Resources/Item.txt";
         public const string ItemNamePath = "Resources/ItemName.txt";
 

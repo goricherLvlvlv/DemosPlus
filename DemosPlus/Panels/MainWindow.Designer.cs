@@ -132,14 +132,14 @@ namespace DemosPlus
             this.dumpView.Location = new System.Drawing.Point(332, 32);
             this.dumpView.Name = "dumpView";
             this.dumpView.RowTemplate.Height = 23;
-            this.dumpView.Size = new System.Drawing.Size(905, 600);
+            this.dumpView.Size = new System.Drawing.Size(982, 600);
             this.dumpView.TabIndex = 13;
             // 
             // MainWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1249, 644);
+            this.ClientSize = new System.Drawing.Size(1326, 644);
             this.Controls.Add(this.dumpView);
             this.Controls.Add(this.inputReturn);
             this.Controls.Add(this.txtReturn);

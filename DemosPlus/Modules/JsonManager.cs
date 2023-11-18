@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace DemosPlus.Modules
 {
     [JsonConverter(typeof(JsonPathConverter))]
-    public class JsonPricesAvg
+    public class NetPricesAvg
     {
         [JsonProperty("location")]
         public string city { get; set; }
@@ -33,7 +33,7 @@ namespace DemosPlus.Modules
     }
 
     [JsonConverter(typeof(JsonPathConverter))]
-    public class JsonBuyMaxPrices
+    public class NetBuyMaxPrices
     {
         [JsonProperty("location")]
         public string city { get; set; }
@@ -48,6 +48,31 @@ namespace DemosPlus.Modules
         public int buy_price_max { get; set; }
     }
 
+    [JsonConverter(typeof(JsonPathConverter))]
+    public class ConfigItem
+    {
+        [JsonProperty("key")]
+        public string key { get; set; }
+
+        [JsonProperty("tierMin")]
+        public int tierMin { get; set; }
+
+        [JsonProperty("tierMax")]
+        public int tierMax { get; set; }
+
+        [JsonProperty("enchantMin")]
+        public int enchantMin { get; set; }
+
+        [JsonProperty("enchantMax")]
+        public int enchantMax { get; set; }
+
+        [JsonProperty("enchantType")]
+        public EnchantType enchantType { get; set; }
+
+        [JsonProperty("nameMap")]
+        public Dictionary<string, string> nameMap { get; set; }
+    }
+
     public class JsonManager : IModule
     {
         public void OnResolve()
@@ -58,14 +83,19 @@ namespace DemosPlus.Modules
         {
         }
 
-        public List<JsonPricesAvg> GetPricesAvg(string json)
+        public List<NetPricesAvg> GetPricesAvg(string json)
         {
-            return JsonConvert.DeserializeObject<List<JsonPricesAvg>>(json);
+            return JsonConvert.DeserializeObject<List<NetPricesAvg>>(json);
         }
 
-        public List<JsonBuyMaxPrices> GetBuyMaxPrices(string json)
+        public List<NetBuyMaxPrices> GetBuyMaxPrices(string json)
         {
-            return JsonConvert.DeserializeObject<List<JsonBuyMaxPrices>>(json);
+            return JsonConvert.DeserializeObject<List<NetBuyMaxPrices>>(json);
+        }
+
+        public List<ConfigItem> GetItems(string json)
+        {
+            return JsonConvert.DeserializeObject<List<ConfigItem>>(json);
         }
 
     }

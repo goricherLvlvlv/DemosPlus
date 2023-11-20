@@ -72,6 +72,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Const\Constance.cs" />
+    <Compile Include="Modules\Calculator.cs" />
     <Compile Include="Modules\ExcelUtil.cs" />
     <Compile Include="Modules\IModule.cs" />
     <Compile Include="Modules\JsonManager.cs" />

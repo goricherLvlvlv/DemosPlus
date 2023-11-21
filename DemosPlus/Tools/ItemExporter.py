@@ -3,7 +3,11 @@ import re
 import json
 
 sheet_names = ['Consume', 'Journal', 'Mount', 'Gear', 'Resource', 'Artifact']
-workbook = openpyxl.load_workbook('../Resources/Item.xlsx')
+
+class craftExt:
+    resource_list = []
+    count_list = []
+    can_return_list = []
 
 class itemExt:
     key = ""
@@ -15,16 +19,84 @@ class itemExt:
 
     nameMap = {}
 
-    def toJSON(self):
-        return json.dumps(self, default=lambda o: o.__dict__, 
-            sort_keys=False, indent=4)
-
 item_map = {}
+item_craft_map = {}
+uniqueName2ItemKey = {}
 
 numberFilter = "\d+"
 tierFilter = "^T\d+_"
 enchantFilter = "@\d+$"
 enchant2Filter = "_LEVEL\d+@\d+$"
+
+def FetchItemKey(unique_name):
+    if unique_name in uniqueName2ItemKey:
+        return uniqueName2ItemKey[unique_name]
+
+    startIndex = 0
+    endIndex = len(unique_name)
+
+    tierResult = re.search(tierFilter, unique_name)
+    enchantResult = re.search(enchantFilter, unique_name)
+
+    if  tierResult is not None:
+        startIndex = tierResult.end()
+
+    if enchantResult is not None:
+        enchant2Result = re.search(enchant2Filter, unique_name)
+        if enchant2Result is not None:
+            enchantResult = enchant2Result
+        endIndex = enchantResult.start()
+
+    item_key = str(unique_name[startIndex:endIndex])
+    uniqueName2ItemKey[unique_name] = item_key
+    return item_key
+
+def ProcessCraft(unique_name, craft_list):
+    item_key = FetchItemKey(unique_name)
+
+    if item_key in item_craft_map:
+        return
+
+    crafts = []
+    for craft in craft_list:
+        c = craftExt()
+        c.resource_list = []
+        c.count_list = []
+        c.can_return_list = []
+
+        if type(craft) is list:
+            resource_list = craft
+            for resource in resource_list:
+                c.resource_list.append(FetchItemKey(resource["@uniquename"]))
+                c.count_list.append(resource["@count"])
+        else:
+            c.resource_list.append(FetchItemKey(craft["@uniquename"]))
+            c.count_list.append(craft["@count"])
+
+    item_craft_map[item_key] = craft_list
+
+def ProcessCrafts():
+    item_craft_map.clear()
+    with open('../Resources/craft.json', 'r') as file:
+        json_obj = json.load(file)
+        equipments = json_obj["items"]["equipmentitem"]
+        for equip in equipments:
+            unique_name = equip["@uniquename"]
+            requirements = equip["craftingrequirements"]
+            if requirements is not None:
+                if type(requirements) is list:
+                    craft_list = []
+                    for requirement in requirements:
+                        craft = requirement["craftresource"]
+                        craft_list.append(craft)
+                    ProcessCraft(unique_name, craft_list)
+                    pass
+                else:
+                    craft_list = []
+                    craft = requirements["craftresource"]
+                    craft_list.append(craft)
+                    ProcessCraft(unique_name, craft_list)
+                    pass
 
 def ProcessCell(cell, name):
 
@@ -100,8 +172,7 @@ def ProcessCell(cell, name):
     return itemKey
 
 def Export():
-    encoder = json.encoder.JSONEncoder()
-
+    workbook = openpyxl.load_workbook('../Resources/Item.xlsx')
     for name in sheet_names:
         filename = '../Resources/' + name + '.txt'
         
@@ -120,9 +191,8 @@ def Export():
                 item = item_map[itemKey]
                 item_list.append(item)
             text = json.dumps(item_list, default=lambda o: o.__dict__)
-            # for item in item_map:
-            #     text += item_map[item].toJSON()
-            #     text += '\n'
+
             f.write(text)
 
-Export()
+ProcessCrafts()
+# Export()

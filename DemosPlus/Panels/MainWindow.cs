@@ -54,6 +54,15 @@ namespace DemosPlus
             dropItem.Items.AddRange(items.ToArray());
         }
 
+        #region Core
+
+        private void GetResourcesPrices()
+        { 
+            
+        }
+
+        #endregion
+
         #region Tool
 
         private List<string> GetItems(string itemKey)

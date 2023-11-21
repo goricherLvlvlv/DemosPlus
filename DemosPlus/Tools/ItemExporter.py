@@ -10,14 +10,15 @@ class craftExt:
     can_return_list = []
 
 class itemExt:
-    key = ""
-    tierMin = 0
-    tierMax = 0
-    enchantMin = 0
-    enchantMax = 0
-    enchantType = 0
+    key : str = ""
+    tierMin : int = 0
+    tierMax : int = 0
+    enchantMin : int = 0
+    enchantMax : int = 0
+    enchantType : int = 0
 
-    nameMap = {}
+    name_map = {}
+    craft_ext : craftExt = None
 
 item_map = {}
 item_craft_map = {}
@@ -28,7 +29,7 @@ tierFilter = "^T\d+_"
 enchantFilter = "@\d+$"
 enchant2Filter = "_LEVEL\d+@\d+$"
 
-def FetchItemKey(unique_name):
+def FetchItemKey(unique_name : str):
     if unique_name in uniqueName2ItemKey:
         return uniqueName2ItemKey[unique_name]
 
@@ -51,15 +52,25 @@ def FetchItemKey(unique_name):
     uniqueName2ItemKey[unique_name] = item_key
     return item_key
 
-def ProcessCraft(unique_name, craft_list):
+
+def ProcessCraftResource(craft_ext : craftExt, resource):
+    craft_ext.resource_list.append(FetchItemKey(resource["@uniquename"]))
+    craft_ext.count_list.append(resource["@count"])
+    if "@maxreturnamount" in resource:
+        craft_ext.can_return_list.append(False)
+    else:
+        craft_ext.can_return_list.append(True)
+
+def ProcessCraft(unique_name : str, craft_list):
     item_key = FetchItemKey(unique_name)
 
     if item_key in item_craft_map:
         return
 
-    crafts = []
+    crafts : list[craftExt] = []
     for craft in craft_list:
         c = craftExt()
+        crafts.append(c)
         c.resource_list = []
         c.count_list = []
         c.can_return_list = []
@@ -67,13 +78,11 @@ def ProcessCraft(unique_name, craft_list):
         if type(craft) is list:
             resource_list = craft
             for resource in resource_list:
-                c.resource_list.append(FetchItemKey(resource["@uniquename"]))
-                c.count_list.append(resource["@count"])
+                ProcessCraftResource(c, resource)
         else:
-            c.resource_list.append(FetchItemKey(craft["@uniquename"]))
-            c.count_list.append(craft["@count"])
-
-    item_craft_map[item_key] = craft_list
+            ProcessCraftResource(c, craft)
+        
+    item_craft_map[item_key] = crafts
 
 def ProcessCrafts():
     item_craft_map.clear()
@@ -82,24 +91,21 @@ def ProcessCrafts():
         equipments = json_obj["items"]["equipmentitem"]
         for equip in equipments:
             unique_name = equip["@uniquename"]
-            requirements = equip["craftingrequirements"]
-            if requirements is not None:
+            if "craftingrequirements" in equip:
+                requirements = equip["craftingrequirements"]
                 if type(requirements) is list:
                     craft_list = []
                     for requirement in requirements:
                         craft = requirement["craftresource"]
                         craft_list.append(craft)
                     ProcessCraft(unique_name, craft_list)
-                    pass
-                else:
+                elif "craftresource" in requirements:
                     craft_list = []
                     craft = requirements["craftresource"]
                     craft_list.append(craft)
                     ProcessCraft(unique_name, craft_list)
-                    pass
 
-def ProcessCell(cell, name):
-
+def ProcessCell(cell : str, name : str):
     tierNumber = 0
     enchantNumber = 0
     enchantType = 0
@@ -134,11 +140,12 @@ def ProcessCell(cell, name):
     itemKey = str(cell[startIndex:endIndex])
 
     if itemKey not in item_map:
-        item_map[itemKey] = itemExt()
-        item_map[itemKey].key = itemKey
-        item_map[itemKey].nameMap = {}
+        item_ext : itemExt = itemExt()
+        item_map[itemKey] = item_ext
+        item_ext.key = itemKey
+        item_ext.name_map = {}
 
-    item_ext = item_map[itemKey]
+    item_ext: itemExt = item_map[itemKey]
     tierMin, tierMax, enchantMin, enchantMax = item_ext.tierMin, item_ext.tierMax, item_ext.enchantMin, item_ext.enchantMax
     if tierNumber > 0:
         if tierMin == 0:
@@ -167,7 +174,9 @@ def ProcessCell(cell, name):
     item_ext.enchantMin = enchantMin
     item_ext.enchantMax = enchantMax
     item_ext.enchantType = enchantType
-    item_ext.nameMap[name] = str(tierNumber) + '|' + str(enchantNumber)
+    item_ext.name_map[name] = str(tierNumber) + '|' + str(enchantNumber)
+    if itemKey in item_craft_map:
+        item_ext.craft_ext = item_craft_map[itemKey]
 
     return itemKey
 
@@ -195,4 +204,4 @@ def Export():
             f.write(text)
 
 ProcessCrafts()
-# Export()
+Export()

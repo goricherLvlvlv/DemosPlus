@@ -10,6 +10,8 @@ namespace DemosPlus.Modules
     {
         private Dictionary<string, ConfigItem> _itemMap;
 
+        private Dictionary<ItemType, Dictionary<string, ConfigItem>> _typeItemMap;
+
         public void OnResolve()
         {
             InitItems2();
@@ -19,13 +21,24 @@ namespace DemosPlus.Modules
         {
         }
 
-        public List<string> GetItems()
+        public List<string> GetItems(ItemType itemType = ItemType.None)
         {
             List<string> res = new List<string>();
-            foreach (var item in _itemMap)
+
+            if (itemType == ItemType.None)
             {
-                //res.AddRange(item.Value.nameMap.Keys);
-                res.Add(item.Key);
+                foreach (var item in _itemMap)
+                {
+                    res.Add(item.Key);
+                }
+            }
+            else
+            {
+                var map = _typeItemMap[itemType];
+                foreach (var item in map)
+                {
+                    res.Add(item.Key);
+                }
             }
 
             return res;
@@ -55,9 +68,16 @@ namespace DemosPlus.Modules
         private void InitItems2()
         {
             _itemMap = new Dictionary<string, ConfigItem>();
+            _typeItemMap = new Dictionary<ItemType, Dictionary<string, ConfigItem>>();
 
-            foreach (var itemType in Enum.GetNames(typeof(ItemType)))
-            { 
+            foreach (ItemType itemType in Enum.GetValues(typeof(ItemType)))
+            {
+                if (itemType == ItemType.None)
+                {
+                    continue;
+                }
+
+                _typeItemMap[itemType] = new Dictionary<string, ConfigItem>();
                 string itemPath = string.Format("{0}" + string.Format(Const.ItemTypePath, itemType), Path.GetFullPath(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"..\..\")));
                 var json = File.ReadAllText(itemPath);
                 var items = QJsonManager.Instance.GetItems(json);
@@ -65,6 +85,7 @@ namespace DemosPlus.Modules
                 foreach (var item in items)
                 {
                     _itemMap[item.key] = item;
+                    _typeItemMap[itemType][item.key] = item;
                 }
 
             }

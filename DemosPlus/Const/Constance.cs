@@ -60,6 +60,7 @@ namespace DemosPlus
 
     public enum ItemType
     {
+        None,
         Consume,
         Journal,
         Mount,

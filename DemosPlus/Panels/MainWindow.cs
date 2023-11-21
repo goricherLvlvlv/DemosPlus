@@ -56,9 +56,26 @@ namespace DemosPlus
 
         #region Core
 
-        private void GetResourcesPrices()
-        { 
-            
+        private void GetResourcesPrices(Duration duration)
+        {
+            var (startDate, endDate) = GetUrlDate(duration);
+            var quality = Quality.None;
+            var citys = GetCitys();
+            var resources = QExcelUtil.Instance.GetItems(ItemType.Resource);
+            foreach (var resource in resources)
+            { 
+                var items = GetItems(resource);
+                if (items == null || items.Count <= 0)
+                {
+                    continue;
+                }
+
+                var url = QUrlManager.Instance.GetPricesAvgUrl(items, citys, startDate, endDate, quality);
+                var result = QNetwork.Instance.GetResult(url);
+                var avgList = QJsonManager.Instance.GetPricesAvg(result);
+                var avgMap = ProcessAvg(avgList);
+                
+            }
         }
 
         #endregion

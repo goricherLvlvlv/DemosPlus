@@ -55,7 +55,7 @@ def FetchItemKey(unique_name : str):
 
 def ProcessCraftResource(craft_ext : craftExt, resource):
     craft_ext.resource_list.append(FetchItemKey(resource["@uniquename"]))
-    craft_ext.count_list.append(resource["@count"])
+    craft_ext.count_list.append(int(resource["@count"]))
     if "@maxreturnamount" in resource:
         craft_ext.can_return_list.append(False)
     else:
@@ -84,26 +84,35 @@ def ProcessCraft(unique_name : str, craft_list):
         
     item_craft_map[item_key] = crafts
 
+
+def ProcessGears(gears):
+    for gear in gears:
+        unique_name = gear["@uniquename"]
+
+        if "craftingrequirements" in gear:
+            requirements = gear["craftingrequirements"]
+            if type(requirements) is list:
+                craft_list = []
+                for requirement in requirements:
+                    craft = requirement["craftresource"]
+                    craft_list.append(craft)
+                ProcessCraft(unique_name, craft_list)
+            elif "craftresource" in requirements:
+                craft_list = []
+                craft = requirements["craftresource"]
+                craft_list.append(craft)
+                ProcessCraft(unique_name, craft_list)
+
 def ProcessCrafts():
     item_craft_map.clear()
     with open('../Resources/craft.json', 'r') as file:
         json_obj = json.load(file)
-        equipments = json_obj["items"]["equipmentitem"]
-        for equip in equipments:
-            unique_name = equip["@uniquename"]
-            if "craftingrequirements" in equip:
-                requirements = equip["craftingrequirements"]
-                if type(requirements) is list:
-                    craft_list = []
-                    for requirement in requirements:
-                        craft = requirement["craftresource"]
-                        craft_list.append(craft)
-                    ProcessCraft(unique_name, craft_list)
-                elif "craftresource" in requirements:
-                    craft_list = []
-                    craft = requirements["craftresource"]
-                    craft_list.append(craft)
-                    ProcessCraft(unique_name, craft_list)
+        gears = json_obj["items"]["equipmentitem"]
+        ProcessGears(gears)
+        gears = json_obj["items"]["weapon"]
+        ProcessGears(gears)
+        gears = json_obj["items"]["transformationweapon"]
+        ProcessGears(gears)
 
 def ProcessCell(cell : str, name : str):
     tierNumber = 0

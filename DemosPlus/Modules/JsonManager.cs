@@ -51,6 +51,20 @@ namespace DemosPlus.Modules
     [JsonConverter(typeof(JsonPathConverter))]
     public class ConfigItem
     {
+        [JsonConverter(typeof(JsonPathConverter))]
+        public class CraftExt
+        { 
+            [JsonProperty("resource_list")]
+            public List<string> resourceList { get; set; }
+
+            [JsonProperty("count_list")]
+            public List<int> countList { get; set; }
+
+            [JsonProperty("can_return_list")]
+            public List<bool> canReturnList { get; set; }
+
+        }
+
         [JsonProperty("key")]
         public string key { get; set; }
 
@@ -69,8 +83,11 @@ namespace DemosPlus.Modules
         [JsonProperty("enchantType")]
         public EnchantType enchantType { get; set; }
 
-        [JsonProperty("nameMap")]
+        [JsonProperty("name_map")]
         public Dictionary<string, string> nameMap { get; set; }
+
+        [JsonProperty("craft_ext")]
+        public List<CraftExt> crafts { get; set; }
     }
 
     public class JsonManager : IModule

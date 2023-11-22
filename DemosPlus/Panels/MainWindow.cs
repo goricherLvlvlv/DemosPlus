@@ -17,6 +17,9 @@ namespace DemosPlus
             InitReturn();
             InitTax();
             InitItem();
+
+            // var map = GetTypePrices(Duration.SevenDays, ItemType.Resource);
+            // var res = QCalculator.Instance.CalCost("2H_DUALAXE_KEEPER");
         }
 
         private void InitDuration()
@@ -50,189 +53,15 @@ namespace DemosPlus
 
         private void InitItem()
         {
-            var items = QExcelUtil.Instance.GetItems();
+            var items = QExcelUtil.Instance.GetItemKeys();
             dropItem.Items.AddRange(items.ToArray());
         }
 
         #region Core
 
-        private void GetResourcesPrices(Duration duration)
-        {
-            var (startDate, endDate) = GetUrlDate(duration);
-            var quality = Quality.None;
-            var citys = GetCitys();
-            var resources = QExcelUtil.Instance.GetItems(ItemType.Resource);
-            foreach (var resource in resources)
-            { 
-                var items = GetItems(resource);
-                if (items == null || items.Count <= 0)
-                {
-                    continue;
-                }
-
-                var url = QUrlManager.Instance.GetPricesAvgUrl(items, citys, startDate, endDate, quality);
-                var result = QNetwork.Instance.GetResult(url);
-                var avgList = QJsonManager.Instance.GetPricesAvg(result);
-                var avgMap = ProcessAvg(avgList);
-                
-            }
-        }
-
         #endregion
 
         #region Tool
-
-        private List<string> GetItems(string itemKey)
-        {
-            var item = QExcelUtil.Instance.GetItem(itemKey);
-            int tierMin = item.tierMin;
-            int tierMax = item.tierMax;
-            int enchantMin = item.enchantMin;
-            int enchantMax = item.enchantMax;
-
-            List<(string name, bool hasEnchant)> tiers = new List<(string, bool)>();
-            List<string> result = new List<string>();
-
-            if (tierMin == 0 || tierMax == 0)
-            {
-                tiers.Add((itemKey, false));
-            }
-            else
-            {
-                for (int i = tierMin; i <= tierMax; ++i)
-                {
-                    var withTier = $"T{i}_" + itemKey;
-                    tiers.Add((withTier, i > 3));
-                }
-            }
-
-            if (enchantMin == 0 || enchantMax == 0)
-            {
-                for (int i = 0; i < tiers.Count; ++i)
-                {
-                    result.Add(tiers[i].name);
-                }
-            }
-            else
-            {
-                var enchantType = QExcelUtil.Instance.GetEnchantType(itemKey);
-
-                for (int i = 0; i < tiers.Count; ++i)
-                {
-                    result.Add(tiers[i].name);
-
-                    if (!tiers[i].hasEnchant)
-                    {
-                        continue;
-                    }
-
-                    for (int j = enchantMin; j <= enchantMax; ++j)
-                    {
-                        var name = tiers[i].name;
-                        name += $"{(enchantType == EnchantType.JustAt ? $"@{j}" : $"_LEVEL{j}@{j}")}";
-                        result.Add(name);
-                    }
-                }
-            }
-
-            return result;
-
-        }
-
-        private List<City> GetCitys()
-        {
-            return new List<City> { City.Thetford, City.BridgeWatch, City.Martlock, City.Lymhurst, City.FortSterling, City.Caerleon, City.BlackMarket };
-        }
-
-        private int GetDays(Duration duration)
-        {
-            switch (duration)
-            {
-                case Duration.OneDay: return 1;
-                case Duration.SevenDays: return 7;
-                case Duration.TwoWeeks: return 14;
-                case Duration.ThreeWeeks: return 21;
-                case Duration.OneMonth: return 30;
-                default: return 1;
-            }
-        }
-
-        private (UrlDate start, UrlDate end) GetUrlDate(Duration duration)
-        {
-            var today = DateTime.Now;
-            int days = GetDays(duration);
-            var startDay = today - new TimeSpan(days, 0, 0, 0);
-
-            var start = new UrlDate()
-            {
-                day = startDay.Day,
-                month = startDay.Month,
-                year = startDay.Year,
-            };
-
-            var end = new UrlDate()
-            {
-                day = today.Day,
-                month = today.Month,
-                year = today.Year,
-            };
-
-            return (start, end);
-        }
-
-        private Dictionary<(string item, City city), double> ProcessAvg(List<NetPricesAvg> avgs)
-        {
-            var map = new Dictionary<(string item, City city), double>();
-            var map2 = new Dictionary<(string item, City city), int>();
-            foreach (var avg in avgs)
-            {
-                var key = (avg.item, GetCityByName(avg.city));
-                if (!map.ContainsKey(key))
-                {
-                    map[key] = 0d;
-                    map2[key] = 0;
-                }
-
-                map[key] += avg.GetAverage();
-                map2[key] += 1;
-            }
-
-            var res = new Dictionary<(string item, City city), double>();
-            foreach (var m in map)
-            {
-                res[m.Key] = map[m.Key] / map2[m.Key];
-            }
-            return res;
-        }
-
-        private City GetCityByName(string name)
-        {
-            if (Enum.TryParse<City>(name, true, out var city))
-            {
-                return city;
-            }
-
-            Regex portalRegex = new Regex(@" Portal$");
-            if (portalRegex.IsMatch(name))
-            {
-                name = name.Substring(0, name.Length - 7);
-                if (Enum.TryParse<City>(name, true, out city))
-                {
-                    return city;
-                }
-            }
-
-            if (name.Equals("Fort Sterling", StringComparison.OrdinalIgnoreCase))
-            {
-                return City.FortSterling;
-            }
-            else if (name.Equals("Black Market", StringComparison.OrdinalIgnoreCase))
-            {
-                return City.BlackMarket;
-            }
-
-            return City.None;
-        }
 
         #endregion
 
@@ -245,45 +74,25 @@ namespace DemosPlus
                 return;
             }
             var duration = (Duration)dropDuration.SelectedItem;
+            var avgMap = QCalculator.Instance.GetAvgMap(dropItem.Text, duration);
 
-            var items = GetItems(dropItem.Text);
-            if (items == null || items.Count <= 0)
+            if (avgMap == null)
             {
                 return;
             }
-
-            var (startDate, endDate) = GetUrlDate(duration);
-
-            var quality = Quality.None;
-            var citys = GetCitys();
-
-            var url = QUrlManager.Instance.GetPricesAvgUrl(items, citys, startDate, endDate, quality);
-
-            var result = QNetwork.Instance.GetResult(url);
-            var avgList = QJsonManager.Instance.GetPricesAvg(result);
-            avgList.Sort((a, b) =>
-            {
-                if (a.city != b.city)
-                {
-                    return string.Compare(a.city, b.city);
-                }
-
-                if (a.item == b.item) return 0;
-                return string.Compare(a.item, b.item);
-            });
-
-            var avgMap = ProcessAvg(avgList);
 
             dumpView.DataSource = null;
             dumpView.Columns.Clear();
             dumpView.Rows.Clear();
 
+            var citys = QExcelUtil.Instance.GetCitys();
             foreach (var city in citys)
             {
                 dumpView.Columns.Add(city.ToString(), city.ToString());
             }
             dumpView.Columns.Add("Average", "Average");
 
+            var items = QExcelUtil.Instance.GetItems(dropItem.Text);
             foreach (var item in items)
             {
                 var rowView = new DataGridViewRow();

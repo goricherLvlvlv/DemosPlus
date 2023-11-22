@@ -1,8 +1,6 @@
-﻿using Microsoft.Office.Interop.Excel;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Text.RegularExpressions;
 
 namespace DemosPlus.Modules
 {
@@ -12,16 +10,18 @@ namespace DemosPlus.Modules
 
         private Dictionary<ItemType, Dictionary<string, ConfigItem>> _typeItemMap;
 
+        public const int HasEnchantLevel = 4;
+
         public void OnResolve()
         {
-            InitItems2();
+            InitItems();
         }
 
         public void OnDestroy()
         {
         }
 
-        public List<string> GetItems(ItemType itemType = ItemType.None)
+        public List<string> GetItemKeys(ItemType itemType = ItemType.None)
         {
             List<string> res = new List<string>();
 
@@ -44,7 +44,59 @@ namespace DemosPlus.Modules
             return res;
         }
 
-        public ConfigItem GetItem(string itemKey)
+        public List<City> GetCitys()
+        {
+            return new List<City> { City.Thetford, City.BridgeWatch, City.Martlock, City.Lymhurst, City.FortSterling, City.Caerleon, City.BlackMarket };
+        }
+
+        public string GetItem(string itemKey, int tier, int enchant)
+        {
+            var config = QExcelUtil.Instance.GetConfig(itemKey);
+            int tierMin = config.tierMin;
+            int tierMax = config.tierMax;
+            int enchantMin = config.enchantMin;
+            int enchantMax = config.enchantMax;
+            var enchantType = config.enchantType;
+
+            string name = itemKey;
+            if (tierMin != 0 && tierMax != 0)
+            {
+                name = $"T{tier}_" + itemKey;
+            }
+
+            if (tier >= HasEnchantLevel && enchant != 0 && enchantMin != 0 && enchantMax != 0)
+            {
+                name += $"{(enchantType == EnchantType.JustAt ? $"@{enchant}" : $"_LEVEL{enchant}@{enchant}")}";
+            }
+
+            return name;
+        }
+
+        public List<string> GetItems(string itemKey)
+        {
+            List<string> result = new List<string>();
+
+            var config = QExcelUtil.Instance.GetConfig(itemKey);
+            int tierMin = config.tierMin;
+            int tierMax = config.tierMax;
+            int enchantMin = config.enchantMin;
+            int enchantMax = config.enchantMax;
+            for (int tier = tierMin; tier <= tierMax; ++tier)
+            {
+                result.Add(GetItem(itemKey, tier, 0));
+                if (tier >= HasEnchantLevel)
+                {
+                    for (int enchant = enchantMin; enchant <= enchantMax; ++enchant)
+                    {
+                        result.Add(GetItem(itemKey, tier, enchant));
+                    }
+                }
+            }
+
+            return result;
+        }
+
+        public ConfigItem GetConfig(string itemKey)
         {
             if (!_itemMap.TryGetValue(itemKey, out var item))
             {
@@ -56,7 +108,7 @@ namespace DemosPlus.Modules
 
         public EnchantType GetEnchantType(string itemKey)
         {
-            var item = GetItem(itemKey);
+            var item = GetConfig(itemKey);
             if (item == null)
             {
                 return EnchantType.None;
@@ -65,7 +117,7 @@ namespace DemosPlus.Modules
             return item.enchantType;
         }
 
-        private void InitItems2()
+        private void InitItems()
         {
             _itemMap = new Dictionary<string, ConfigItem>();
             _typeItemMap = new Dictionary<ItemType, Dictionary<string, ConfigItem>>();

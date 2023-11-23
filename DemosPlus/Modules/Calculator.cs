@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text.RegularExpressions;
 using static DemosPlus.Modules.ConfigItem;
 
@@ -19,7 +20,53 @@ namespace DemosPlus.Modules
 
         #region Interface
 
-        public Dictionary<string, double> CalCost(string itemKey)
+        public Dictionary<(string item, City city), double> CalProfit(string itemKey, SaleMode mode, Duration duration = Duration.SevenDays, Tax tax = Tax.Tax_6_26)
+        {
+            Stopwatch sw = new Stopwatch();
+            List<long> mills = new List<long>();
+
+            var cost = QCalculator.Instance.CalCost(itemKey);
+            var prices = mode == SaleMode.SellOrder ?
+                QCalculator.Instance.GetAvgPrices(itemKey, Duration.SevenDays) :
+                QCalculator.Instance.GetBuyMaxPrices(itemKey, Duration.SevenDays);
+
+            var citys = QExcelUtil.Instance.GetCitys();
+            var taxPercent = QExcelUtil.Instance.GetTax(tax);
+
+            var result = new Dictionary<(string item, City city), double>();
+            foreach (var city in citys)
+            {
+                foreach (var c in cost)
+                {
+                    var item = c.Key;
+                    var costNum = double.PositiveInfinity;
+                    foreach (var min in c.Value)
+                    {
+                        costNum = costNum < min ? costNum : min;
+                    }
+
+                    if (!prices.TryGetValue((item, city), out var saleNum))
+                    {
+                        continue;
+                    }
+
+                    if (saleNum == 0)
+                    {
+                        continue;
+                    }
+
+                    var percent = (saleNum - costNum) / costNum - taxPercent;
+                    result[(item, city)] = percent;
+                }
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// 计算某一类道具的成本
+        /// </summary>
+        public Dictionary<string, List<double>> CalCost(string itemKey, Duration duration = Duration.SevenDays)
         {
             var config = QExcelUtil.Instance.GetConfig(itemKey);
             if (config.crafts == null || config.crafts.Count <= 0)
@@ -41,13 +88,12 @@ namespace DemosPlus.Modules
                         continue;
                     }
 
-                    AppendItemKeyPrices(Duration.SevenDays, resourceItemKey, ref prices);
-
+                    AppendItemKeyPrices(duration, resourceItemKey, ref prices);
                     pricesCache.Add(resourceItemKey);
                 }
             }
 
-            var result = new Dictionary<string, double>();
+            var result = new Dictionary<string, List<double>>();
             int tierMin = config.tierMin;
             int tierMax = config.tierMax;
             int enchantMin = config.enchantMin;
@@ -59,7 +105,11 @@ namespace DemosPlus.Modules
                 {
                     var item = QExcelUtil.Instance.GetItem(itemKey, tier, 0);
                     var cost = CalCost(craft, tier, 0, prices);
-                    result[item] = cost;
+                    if (!result.ContainsKey(item))
+                    {
+                        result[item] = new List<double>();
+                    }
+                    result[item].Add(cost);
 
                     if (tier >= ExcelUtil.HasEnchantLevel)
                     {
@@ -67,7 +117,12 @@ namespace DemosPlus.Modules
                         {
                             item = QExcelUtil.Instance.GetItem(itemKey, tier, enchant);
                             cost = CalCost(craft, tier, enchant, prices);
-                            result[item] = cost;
+
+                            if (!result.ContainsKey(item))
+                            {
+                                result[item] = new List<double>();
+                            }
+                            result[item].Add(cost);
                         }
                     }
                 }
@@ -77,9 +132,41 @@ namespace DemosPlus.Modules
         }
 
         /// <summary>
+        /// 获取 道具, 城市 二维直接出售价格表
+        /// </summary>
+        public Dictionary<(string item, City city), double> GetBuyMaxPrices(string itemKey, Duration duration)
+        {
+            var items = QExcelUtil.Instance.GetItems(itemKey);
+            if (items == null || items.Count <= 0)
+            {
+                return null;
+            }
+
+            var (startDate, endDate) = GetUrlDate(duration);
+            var quality = Quality.None;
+            var citys = QExcelUtil.Instance.GetCitys();
+            var url = QUrlManager.Instance.GetBuyMaxPricesUrl(items, citys, startDate, endDate, quality);
+            var result = QNetwork.Instance.GetResult(url);
+            var buyMaxPrices = QJsonManager.Instance.GetBuyMaxPrices(result);
+            buyMaxPrices.Sort((a, b) =>
+            {
+                if (a.city != b.city)
+                {
+                    return string.Compare(a.city, b.city);
+                }
+
+                if (a.item == b.item) return 0;
+                return string.Compare(a.item, b.item);
+            });
+
+            var map = ProcessMaxPrice(buyMaxPrices);
+            return map;
+        }
+
+        /// <summary>
         /// 获取 道具, 城市 二维价格表
         /// </summary>
-        public Dictionary<(string item, City city), double> GetAvgMap(string itemKey, Duration duration)
+        public Dictionary<(string item, City city), double> GetAvgPrices(string itemKey, Duration duration)
         {
             var items = QExcelUtil.Instance.GetItems(itemKey);
             if (items == null || items.Count <= 0)
@@ -176,6 +263,11 @@ namespace DemosPlus.Modules
 
         private City GetCityByName(string name)
         {
+            if (string.IsNullOrEmpty(name))
+            {
+                return City.None;
+            }
+
             if (Enum.TryParse<City>(name, true, out var city))
             {
                 return city;
@@ -203,6 +295,40 @@ namespace DemosPlus.Modules
             return City.None;
         }
 
+        /// <summary>
+        /// 获得不同城市的物品直接出售价格
+        /// </summary>
+        /// <param name="maxPrices"></param>
+        /// <returns></returns>
+        private Dictionary<(string item, City city), double> ProcessMaxPrice(List<NetBuyMaxPrices> maxPrices)
+        {
+            var map = new Dictionary<(string item, City city), double>();
+            var map2 = new Dictionary<(string item, City city), int>();
+
+            foreach (var maxPrice in maxPrices)
+            {
+                var key = (maxPrice.item, GetCityByName(maxPrice.city));
+                if (!map.ContainsKey(key))
+                {
+                    map[key] = 0;
+                    map2[key] = 0;
+                }
+
+                map[key] += maxPrice.buy_price_max;
+                map2[key] += 1;
+            }
+
+            var res = new Dictionary<(string item, City city), double>();
+            foreach (var m in map)
+            {
+                res[m.Key] = map[m.Key] / map2[m.Key];
+            }
+            return res;
+        }
+
+        /// <summary>
+        /// 获取不同城市的物品均价
+        /// </summary>
         private Dictionary<(string item, City city), double> ProcessAvg(List<NetPricesAvg> avgs)
         {
             var map = new Dictionary<(string item, City city), double>();
@@ -228,7 +354,11 @@ namespace DemosPlus.Modules
             return res;
         }
 
-        private Dictionary<string, ItemAvgPrice> ProcessAvg_ForCost(ref Dictionary<string, ItemAvgPrice> result, List<NetPricesAvg> avgs)
+        /// <summary>
+        /// 处理物品均价
+        /// key: 物品itemKey, value: 物品价格
+        /// </summary>
+        private void ProcessAvg_ForCost(ref Dictionary<string, ItemAvgPrice> result, List<NetPricesAvg> avgs)
         {
             var map = ProcessAvg(avgs);
             var resultSum = new Dictionary<string, (double price, int count)>();
@@ -254,10 +384,11 @@ namespace DemosPlus.Modules
                     price = sum.price / sum.count
                 });
             }
-
-            return result;
         }
 
+        /// <summary>
+        /// 获取日期
+        /// </summary>
         private (UrlDate start, UrlDate end) GetUrlDate(Duration duration)
         {
             var today = DateTime.Now;
@@ -281,6 +412,9 @@ namespace DemosPlus.Modules
             return (start, end);
         }
 
+        /// <summary>
+        /// 计算一定阶级/附魔下的配方的成本
+        /// </summary>
         private double CalCost(CraftExt craft, int tier, int enchant, Dictionary<string, ItemAvgPrice> prices)
         {
             var cost = 0d;

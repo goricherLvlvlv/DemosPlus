@@ -1,6 +1,7 @@
 ﻿using DemosPlus.Modules;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
@@ -18,8 +19,11 @@ namespace DemosPlus
             InitTax();
             InitItem();
 
-            // var map = GetTypePrices(Duration.SevenDays, ItemType.Resource);
-            // var res = QCalculator.Instance.CalCost("2H_DUALAXE_KEEPER");
+            var itemKey = "2H_DUALAXE_KEEPER";
+            var mode = SaleMode.Sell;
+
+            var profit = QCalculator.Instance.CalProfit(itemKey, mode, Duration.OneMonth);
+
         }
 
         private void InitDuration()
@@ -74,7 +78,7 @@ namespace DemosPlus
                 return;
             }
             var duration = (Duration)dropDuration.SelectedItem;
-            var avgMap = QCalculator.Instance.GetAvgMap(dropItem.Text, duration);
+            var avgMap = QCalculator.Instance.GetAvgPrices(dropItem.Text, duration);
 
             if (avgMap == null)
             {

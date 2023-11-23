@@ -76,6 +76,12 @@ namespace DemosPlus
         LevelWithAt = 2,
     }
 
+    public enum SaleMode
+    { 
+        SellOrder,
+        Sell,
+    }
+
     public class Const
     {
         public const string ItemTypePath = "Resources/{0}.txt";

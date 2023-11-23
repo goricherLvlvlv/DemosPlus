@@ -44,6 +44,17 @@ namespace DemosPlus.Modules
             return res;
         }
 
+        public double GetTax(Tax tax)
+        {
+            switch (tax)
+            {
+                case Tax.Tax_6_26:return 0.0626d;
+                case Tax.Tax_8_25:return 0.0825d;
+            }
+
+            return 0d;
+        }
+
         public List<City> GetCitys()
         {
             return new List<City> { City.Thetford, City.BridgeWatch, City.Martlock, City.Lymhurst, City.FortSterling, City.Caerleon, City.BlackMarket };

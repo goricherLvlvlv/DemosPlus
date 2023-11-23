@@ -35,7 +35,7 @@ namespace DemosPlus.Modules
     [JsonConverter(typeof(JsonPathConverter))]
     public class NetBuyMaxPrices
     {
-        [JsonProperty("location")]
+        [JsonProperty("city")]
         public string city { get; set; }
 
         [JsonProperty("item_id")]

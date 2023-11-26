@@ -31,6 +31,7 @@ namespace DemosPlus.Modules
                 {
                     res.Add(item.Key);
                 }
+                res.Sort();
             }
             else
             {
@@ -39,6 +40,38 @@ namespace DemosPlus.Modules
                 {
                     res.Add(item.Key);
                 }
+                res.Sort();
+            }
+
+            return res;
+        }
+
+        public List<ConfigItem> GetConfigItems(ItemType itemType = ItemType.None)
+        {
+            List<ConfigItem> res = new List<ConfigItem>();
+
+            if (itemType == ItemType.None)
+            {
+                foreach (var item in _itemMap)
+                {
+                    res.Add(item.Value);
+                }
+                res.Sort((a, b) =>
+                {
+                    return string.Compare(a.key, b.key);
+                });
+            }
+            else
+            {
+                var map = _typeItemMap[itemType];
+                foreach (var item in map)
+                {
+                    res.Add(item.Value);
+                }
+                res.Sort((a, b)=>
+                {
+                    return string.Compare(a.key, b.key);
+                });
             }
 
             return res;

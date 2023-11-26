@@ -23,6 +23,16 @@ namespace DemosPlus.Modules
         [JsonProperty("data.prices_avg")]
         public List<double> prices_avg { get; set; }
 
+        [JsonProperty("data.item_count")]
+        public List<int> item_count { get; set; }
+
+        public int SaleCount()
+        {
+            int count = 0;
+            foreach (var c in item_count) count += c;
+            return count;
+        }
+
         public double GetAverage()
         {
             double sum = 0d;
@@ -88,6 +98,21 @@ namespace DemosPlus.Modules
 
         [JsonProperty("craft_ext")]
         public List<CraftExt> crafts { get; set; }
+
+        public override string ToString()
+        {
+            //if (nameMap == null || nameMap.Count <= 0)
+            //{
+            //    return key;
+            //}
+
+            //foreach (var name in nameMap)
+            //{
+            //    return name.Key;
+            //}
+
+            return key;
+        }
     }
 
     public class JsonManager : IModule

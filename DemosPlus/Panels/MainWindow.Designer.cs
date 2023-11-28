@@ -46,6 +46,7 @@ namespace DemosPlus
             this.gearTab = new System.Windows.Forms.RadioButton();
             this.txtSaleMode = new System.Windows.Forms.Label();
             this.dropSaleMode = new System.Windows.Forms.ComboBox();
+            this.txtItemName = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.dumpView)).BeginInit();
             this.SuspendLayout();
             // 
@@ -98,6 +99,7 @@ namespace DemosPlus
             this.dropItem.Name = "dropItem";
             this.dropItem.Size = new System.Drawing.Size(121, 20);
             this.dropItem.TabIndex = 6;
+            this.dropItem.SelectedIndexChanged += new System.EventHandler(this.OnSelectItem);
             // 
             // txtTax
             // 
@@ -230,11 +232,23 @@ namespace DemosPlus
             this.dropSaleMode.Size = new System.Drawing.Size(121, 20);
             this.dropSaleMode.TabIndex = 20;
             // 
+            // txtItemName
+            // 
+            this.txtItemName.AutoSize = true;
+            this.txtItemName.Font = new System.Drawing.Font("Microsoft YaHei", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.txtItemName.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.txtItemName.Location = new System.Drawing.Point(12, 615);
+            this.txtItemName.Name = "txtItemName";
+            this.txtItemName.Size = new System.Drawing.Size(0, 20);
+            this.txtItemName.TabIndex = 22;
+            this.txtItemName.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
             // MainWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1326, 644);
+            this.Controls.Add(this.txtItemName);
             this.Controls.Add(this.txtSaleMode);
             this.Controls.Add(this.dropSaleMode);
             this.Controls.Add(this.txtDuration);
@@ -279,6 +293,7 @@ namespace DemosPlus
         private System.Windows.Forms.RadioButton gearTab;
         private System.Windows.Forms.Label txtSaleMode;
         private System.Windows.Forms.ComboBox dropSaleMode;
+        private System.Windows.Forms.Label txtItemName;
     }
 }
 

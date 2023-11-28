@@ -153,6 +153,16 @@ namespace DemosPlus
             SelectTab(Tab.Cost);
         }
 
+        private void OnSelectItem(object sender, EventArgs e)
+        {
+            var item = (ConfigItem)dropItem.SelectedItem;
+            foreach (var name in item.nameMap)
+            {
+                txtItemName.Text = name.Key;
+                break;
+            }
+        }
+
         #endregion
 
         #region Core

@@ -22,8 +22,8 @@ namespace DemosPlus.Modules
         {
             var cost = QCalculator.Instance.CalCost(itemKey, returnRate, duration);
             var prices = mode == SaleMode.SellOrder ?
-                QCalculator.Instance.GetAvgPrices(itemKey, duration) :
-                QCalculator.Instance.GetBuyMaxPrices(itemKey, duration);
+                QCalculator.Instance.GetAvgPrices(itemKey, Duration.SevenDays) :
+                QCalculator.Instance.GetBuyMaxPrices(itemKey, Duration.SevenDays);
 
             var citys = QExcelUtil.Instance.GetCitys();
             var taxPercent = QExcelUtil.Instance.GetTax(tax);

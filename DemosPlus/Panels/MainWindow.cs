@@ -17,6 +17,12 @@ namespace DemosPlus
             InitializeComponent();
 
             resourceTab.Checked = true;
+
+            var itemKey = "SHOES_PLATE_SET1";
+            var mode = SaleMode.SellOrder;
+
+            // var profit = QCalculator.Instance.CalProfit(itemKey, mode, Duration.SevenDays);
+
         }
 
         #region Init
@@ -344,10 +350,6 @@ namespace DemosPlus
 
         private void OnClickCalculate(object sender, EventArgs e)
         {
-            dumpView.DataSource = null;
-            dumpView.Columns.Clear();
-            dumpView.Rows.Clear();
-
             switch (_currentTab)
             {
                 case Tab.Resource:

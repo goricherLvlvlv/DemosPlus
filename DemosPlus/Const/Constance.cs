@@ -18,6 +18,21 @@ namespace DemosPlus
         BlackMarket,
     }
 
+    public enum Item
+    {
+        None,
+        T4_Bag,
+        T5_Bag,
+        T6_Bag,
+        T7_Bag,
+        T8_Bag,
+        T4_PLANKS,
+        T5_PLANKS,
+        T6_PLANKS,
+        T7_PLANKS,
+        T8_PLANKS,
+    }
+
     public enum Quality
     {
         None = 0,

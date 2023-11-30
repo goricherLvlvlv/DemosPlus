@@ -132,6 +132,11 @@ namespace DemosPlus.Modules
                 {
                     for (int enchant = enchantMin; enchant <= enchantMax; ++enchant)
                     {
+                        if (enchant == 0)
+                        {
+                            continue;
+                        }
+
                         result.Add(GetItem(itemKey, tier, enchant));
                     }
                 }

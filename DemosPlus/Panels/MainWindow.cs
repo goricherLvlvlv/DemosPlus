@@ -214,7 +214,7 @@ namespace DemosPlus
                     avgMap.TryGetValue((item, city), out var avgPrice);
                     if (avgPrice.price > 0d)
                     {
-                        row.Cells[columnIndex].Value = avgPrice.price.ToString("f2");
+                        row.Cells[columnIndex].Value = avgPrice.price.ToString("n0");
 
                         if (city != City.Caerleon && city != City.BlackMarket)
                         {
@@ -226,7 +226,7 @@ namespace DemosPlus
                     ++columnIndex;
                 }
 
-                row.Cells[columnIndex].Value = (sum / count).ToString("f2");
+                row.Cells[columnIndex].Value = (sum / count).ToString("n0");
             }
 
             dumpView.AutoResizeRowHeadersWidth(DataGridViewRowHeadersWidthSizeMode.AutoSizeToAllHeaders);
@@ -276,7 +276,7 @@ namespace DemosPlus
                 {
                     if (costs[i] > 0d)
                     {
-                        row.Cells[i].Value = costs[i].ToString("f2");
+                        row.Cells[i].Value = costs[i].ToString("n0");
                     }
                 }
             }

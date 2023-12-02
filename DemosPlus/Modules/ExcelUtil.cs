@@ -14,7 +14,7 @@ namespace DemosPlus.Modules
 
         public void OnResolve()
         {
-            InitItems();
+                InitItems();
         }
 
         public void OnDestroy()
@@ -74,7 +74,7 @@ namespace DemosPlus.Modules
                 {
                     res.Add(item.Value);
                 }
-                res.Sort((a, b)=>
+                res.Sort((a, b) =>
                 {
                     if (a.index == b.index) return 0;
                     return a.index < b.index ? -1 : 1;
@@ -88,8 +88,8 @@ namespace DemosPlus.Modules
         {
             switch (tax)
             {
-                case Tax.Tax_6_26:return 0.0626d;
-                case Tax.Tax_8_25:return 0.0825d;
+                case Tax.Tax_6_26: return 0.0626d;
+                case Tax.Tax_8_25: return 0.0825d;
             }
 
             return 0d;
@@ -203,7 +203,13 @@ namespace DemosPlus.Modules
                 }
 
                 _typeItemMap[itemType] = new Dictionary<string, ConfigItem>();
+
+#if DEBUG
                 string itemPath = string.Format("{0}" + string.Format(Const.ItemTypePath, itemType), Path.GetFullPath(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @"..\..\")));
+#else
+                string itemPath = string.Format("{0}" + string.Format(Const.ItemTypePath, itemType), Path.GetFullPath(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, @".\")));
+#endif
+
                 var json = File.ReadAllText(itemPath);
                 var items = QJsonManager.Instance.GetItems(json);
 

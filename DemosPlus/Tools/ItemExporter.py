@@ -10,13 +10,15 @@ class craftExt:
     can_return_list = []
 
 class itemExt:
+    idx : int = 0
+    type : str = ""
     key : str = ""
     tierMin : int = 0
     tierMax : int = 0
     enchantMin : int = 0
     enchantMax : int = 0
     enchantType : int = 0
-
+    chinese_name : str = ""
     name_map = {}
     craft_ext : craftExt = None
 
@@ -114,7 +116,7 @@ def ProcessCrafts():
         gears = json_obj["items"]["transformationweapon"]
         ProcessGears(gears)
 
-def ProcessCell(cell : str, name : str):
+def ProcessCell(idx : int, type : str, cell : str, name : str, chinese_name : str):
     tierNumber = 0
     enchantNumber = 0
     enchantType = 0
@@ -178,12 +180,18 @@ def ProcessCell(cell : str, name : str):
         else:
             enchantMax = enchantNumber if enchantNumber > enchantMax else enchantMax
 
+    item_ext.idx = idx
+    item_ext.type = type
     item_ext.tierMin = tierMin
     item_ext.tierMax = tierMax
     item_ext.enchantMin = enchantMin
     item_ext.enchantMax = enchantMax
     item_ext.enchantType = enchantType
     item_ext.name_map[name] = str(tierNumber) + '|' + str(enchantNumber)
+
+    if chinese_name is "":
+        chinese_name = itemKey
+    item_ext.chinese_name = chinese_name
     if itemKey in item_craft_map:
         item_ext.craft_ext = item_craft_map[itemKey]
 
@@ -199,10 +207,15 @@ def Export():
         with open(filename, 'w') as f:
             text = ""
             sheet = workbook[name]
+            idx = 0
             for row in sheet.rows:
                 cell = str(row[0].value)
                 itemName = str(row[1].value)
-                ProcessCell(cell, itemName)
+                chinese_name = ""
+                if len(row) >= 3:
+                    chinese_name = str(row[2].value)
+                ProcessCell(idx, name, cell, itemName, chinese_name)
+                idx = idx + 1
 
             item_list = []
             for itemKey in item_map:

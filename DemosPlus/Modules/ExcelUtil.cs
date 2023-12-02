@@ -58,7 +58,13 @@ namespace DemosPlus.Modules
                 }
                 res.Sort((a, b) =>
                 {
-                    return string.Compare(a.key, b.key);
+                    if (a.type != b.type)
+                    {
+                        return string.Compare(a.type, b.type);
+                    }
+
+                    if (a.index == b.index) return 0;
+                    return a.index < b.index ? -1 : 1;
                 });
             }
             else
@@ -70,7 +76,8 @@ namespace DemosPlus.Modules
                 }
                 res.Sort((a, b)=>
                 {
-                    return string.Compare(a.key, b.key);
+                    if (a.index == b.index) return 0;
+                    return a.index < b.index ? -1 : 1;
                 });
             }
 
@@ -105,11 +112,28 @@ namespace DemosPlus.Modules
             string name = itemKey;
             if (tierMin != 0 && tierMax != 0)
             {
+                if (tier < tierMin)
+                {
+                    tier = tierMin;
+                }
+                else if (tier > tierMax)
+                {
+                    tier = tierMax;
+                }
                 name = $"T{tier}_" + itemKey;
             }
 
             if (tier >= HasEnchantLevel && enchant != 0 && enchantMin != 0 && enchantMax != 0)
             {
+                if (enchant < enchantMin)
+                {
+                    enchant = enchantMin;
+                }
+                else if (enchant > enchantMax)
+                {
+                    enchant = enchantMax;
+                }
+
                 name += $"{(enchantType == EnchantType.JustAt ? $"@{enchant}" : $"_LEVEL{enchant}@{enchant}")}";
             }
 

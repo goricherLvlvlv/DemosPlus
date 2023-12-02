@@ -37,7 +37,17 @@ namespace DemosPlus.Modules
                     var costNum = double.PositiveInfinity;
                     foreach (var min in c.Value)
                     {
+                        if (min <= 0d)
+                        {
+                            continue;
+                        }
+
                         costNum = costNum < min ? costNum : min;
+                    }
+
+                    if (costNum == double.PositiveInfinity)
+                    {
+                        continue;
                     }
 
                     if (!prices.TryGetValue((item, city), out var saleNum))
@@ -427,6 +437,10 @@ namespace DemosPlus.Modules
                 var canReturn = craft.canReturnList[i];
 
                 var resourcePrice = GetResourcePrice(resourceItemKey, tier, enchant, prices);
+                if (resourcePrice <= 0)
+                {
+                    return -1d;
+                }
 
                 cost += resourcePrice * count * (canReturn ? (1d - returnRate) : 1d);
             }

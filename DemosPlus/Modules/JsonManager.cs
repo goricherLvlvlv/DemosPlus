@@ -75,8 +75,14 @@ namespace DemosPlus.Modules
 
         }
 
+        [JsonProperty("idx")]
+        public int index { get; set; }
+
         [JsonProperty("key")]
         public string key { get; set; }
+
+        [JsonProperty("type")]
+        public string type { get; set; }
 
         [JsonProperty("tierMin")]
         public int tierMin { get; set; }
@@ -93,6 +99,9 @@ namespace DemosPlus.Modules
         [JsonProperty("enchantType")]
         public EnchantType enchantType { get; set; }
 
+        [JsonProperty("chinese_name")]
+        public string chineseName { get; set; }
+
         [JsonProperty("name_map")]
         public Dictionary<string, string> nameMap { get; set; }
 
@@ -101,17 +110,7 @@ namespace DemosPlus.Modules
 
         public override string ToString()
         {
-            //if (nameMap == null || nameMap.Count <= 0)
-            //{
-            //    return key;
-            //}
-
-            //foreach (var name in nameMap)
-            //{
-            //    return name.Key;
-            //}
-
-            return key;
+            return chineseName;
         }
     }
 

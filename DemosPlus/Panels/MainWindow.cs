@@ -1,9 +1,6 @@
 ﻿using DemosPlus.Modules;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Text;
-using System.Text.RegularExpressions;
 using System.Windows.Forms;
 
 namespace DemosPlus
@@ -108,6 +105,7 @@ namespace DemosPlus
                     break;
             }
 
+            dropItem.Text = "";
             dropItem.Items.Clear();
             dropItem.Items.AddRange(items.ToArray());
         }
@@ -156,6 +154,11 @@ namespace DemosPlus
         private void OnSelectItem(object sender, EventArgs e)
         {
             var item = (ConfigItem)dropItem.SelectedItem;
+            if (item == null)
+            {
+                return;
+            }
+
             foreach (var name in item.nameMap)
             {
                 txtItemName.Text = name.Key;
@@ -271,7 +274,10 @@ namespace DemosPlus
 
                 for (int i = 0; i < costs.Count; ++i)
                 {
-                    row.Cells[i].Value = costs[i].ToString("f2");
+                    if (costs[i] > 0d)
+                    {
+                        row.Cells[i].Value = costs[i].ToString("f2");
+                    }
                 }
             }
 

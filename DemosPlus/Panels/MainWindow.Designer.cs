@@ -267,7 +267,7 @@ namespace DemosPlus
             this.Controls.Add(this.dumpView);
             this.Controls.Add(this.btnRun);
             this.Name = "MainWindow";
-            this.Text = "w";
+            this.Text = "主页";
             ((System.ComponentModel.ISupportInitialize)(this.dumpView)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();

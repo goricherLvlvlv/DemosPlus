@@ -325,24 +325,37 @@ namespace DemosPlus
             {
                 var rowView = new DataGridViewRow();
                 rowView.HeaderCell.Value = item;
-
                 var rowIndex = dumpView.Rows.Add(rowView);
-                var row = dumpView.Rows[rowIndex];
+                var percentRow = dumpView.Rows[rowIndex];
+
+                rowView = new DataGridViewRow();
+                rowView.HeaderCell.Value = "  售价:";
+                rowIndex = dumpView.Rows.Add(rowView);
+                var salePriceRow = dumpView.Rows[rowIndex];
+
+                rowView = new DataGridViewRow();
+                rowView.HeaderCell.Value = "  成本:";
+                rowIndex = dumpView.Rows.Add(rowView);
+                var costPriceRow = dumpView.Rows[rowIndex];
 
                 for (int i = 0; i < citys.Count; ++i)
                 {
                     if (profitMap.TryGetValue((item, citys[i]), out var profit))
                     {
-                        row.Cells[i].Value = profit.percent.ToString("f2");
+                        percentRow.Cells[i].Value = $"{profit.percent:f2}";
+                        salePriceRow.Cells[i].Value = $"{profit.salePrice:n0}";
+                        costPriceRow.Cells[i].Value = $"{profit.costPrice:n0}";
                     }
                     else
                     {
-                        row.Cells[i].Value = "";
+                        percentRow.Cells[i].Value = "";
+                        salePriceRow.Cells[i].Value = "";
+                        costPriceRow.Cells[i].Value = "";
                     }
 
                     if (citys[i] == City.BlackMarket)
                     {
-                        row.Cells[blackSalesIndex].Value = profit.number;
+                        percentRow.Cells[blackSalesIndex].Value = profit.number;
                     }
                 }
             }

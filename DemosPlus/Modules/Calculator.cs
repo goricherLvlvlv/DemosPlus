@@ -18,7 +18,7 @@ namespace DemosPlus.Modules
 
         #region Interface
 
-        public Dictionary<(string item, City city), (double percent, int number)> CalProfit(string itemKey, SaleMode mode, double returnRate, Duration duration = Duration.SevenDays, Tax tax = Tax.Tax_6_26)
+        public Dictionary<(string item, City city), (double percent, double salePrice, double costPrice, int number)> CalProfit(string itemKey, SaleMode mode, double returnRate, Duration duration = Duration.SevenDays, Tax tax = Tax.Tax_6_26)
         {
             var cost = QCalculator.Instance.CalCost(itemKey, returnRate, duration);
             var prices = mode == SaleMode.SellOrder ?
@@ -28,7 +28,7 @@ namespace DemosPlus.Modules
             var citys = QExcelUtil.Instance.GetCitys();
             var taxPercent = QExcelUtil.Instance.GetTax(tax);
 
-            var result = new Dictionary<(string item, City city), (double percent, int number)>();
+            var result = new Dictionary<(string item, City city), (double percent, double salePrice, double costPrice, int number)>();
             foreach (var city in citys)
             {
                 foreach (var c in cost)
@@ -61,7 +61,7 @@ namespace DemosPlus.Modules
                     }
 
                     var percent = (saleNum.price - costNum) / costNum - taxPercent;
-                    result[(item, city)] = (percent, saleNum.number);
+                    result[(item, city)] = (percent, saleNum.price, costNum, saleNum.number);
                 }
             }
 

@@ -352,7 +352,7 @@ namespace DemosPlus.Modules
                 }
 
                 avgMap[key] = (avgMap[key].sum + avg.GetAverage(), avgMap[key].cityCount + 1);
-                saleCount[key] = avg.SaleCount();
+                saleCount[key] += avg.SaleCount();
             }
 
             var res = new Dictionary<(string item, City city), (double price, int number)>();

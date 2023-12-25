@@ -32,14 +32,13 @@ namespace DemosPlus.Modules
         {
         }
 
-        public string GetPricesAvgUrl(List<string> items, List<City> citys, UrlDate? startDate, UrlDate? endDate, Quality quality)
+        public string GetPricesAvgUrl(Server server, List<string> items, List<City> citys, UrlDate? startDate, UrlDate? endDate, Quality quality)
         {
             StringBuilder url = new StringBuilder();
-            url.Append(Const.Url_Prices_Avg);
+            url.Append(server == Server.West ? Const.Url_Prices_Avg : Const.Url_Prices_Avg_East);
             AddItemParam(url, items);
 
             bool hasFirstParam = false;
-            //AddCityParam(url, citys, ref hasFirstParam);
             AppendStartDateParam(url, startDate, ref hasFirstParam);
             AppendEndDateParam(url, endDate, ref hasFirstParam);
             AppendQualityParam(url, quality, ref hasFirstParam);
@@ -47,14 +46,13 @@ namespace DemosPlus.Modules
             return url.ToString();
         }
 
-        public string GetBuyMaxPricesUrl(List<string> items, List<City> citys, UrlDate? startDate, UrlDate? endDate, Quality quality)
+        public string GetBuyMaxPricesUrl(Server server, List<string> items, List<City> citys, UrlDate? startDate, UrlDate? endDate, Quality quality)
         {
             StringBuilder url = new StringBuilder();
-            url.Append(Const.Url_Buy_Max_Prices);
+            url.Append(server == Server.West ? Const.Url_Buy_Max_Prices : Const.Url_Buy_Max_Prices_East);
             AddItemParam(url, items);
 
             bool hasFirstParam = false;
-            //AddCityParam(url, citys, ref hasFirstParam);
             AppendStartDateParam(url, startDate, ref hasFirstParam);
             AppendEndDateParam(url, endDate, ref hasFirstParam);
             AppendQualityParam(url, quality, ref hasFirstParam);

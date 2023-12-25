@@ -1,6 +1,7 @@
 ﻿using DemosPlus.Modules;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Windows.Forms;
 
 namespace DemosPlus
@@ -13,6 +14,7 @@ namespace DemosPlus
         {
             InitializeComponent();
 
+            westBtn.Checked = true;
             resourceTab.Checked = true;
         }
 
@@ -178,7 +180,7 @@ namespace DemosPlus
             }
             var duration = (Duration)dropDuration.SelectedItem;
             var config = (ConfigItem)dropItem.SelectedItem;
-            var avgMap = QCalculator.Instance.GetAvgPrices(config.key, duration);
+            var avgMap = QCalculator.Instance.GetAvgPrices(CurrentServer, config.key, duration);
 
             if (avgMap == null)
             {
@@ -243,7 +245,7 @@ namespace DemosPlus
             var duration = (Duration)dropDuration.SelectedItem;
 
             var config = (ConfigItem)dropItem.SelectedItem;
-            var costMap = QCalculator.Instance.CalCost(config.key, returnRate, duration);
+            var costMap = QCalculator.Instance.CalCost(CurrentServer, config.key, returnRate, duration);
 
             if (costMap == null)
             {
@@ -298,7 +300,7 @@ namespace DemosPlus
             var tax = (Tax)dropTax.SelectedItem;
 
             var config = (ConfigItem)dropItem.SelectedItem;
-            var profitMap = QCalculator.Instance.CalProfit(config.key, saleMode, returnRate, duration, tax);
+            var profitMap = QCalculator.Instance.CalProfit(CurrentServer, config.key, saleMode, returnRate, duration, tax);
             if (profitMap == null)
             {
                 return;
@@ -324,16 +326,20 @@ namespace DemosPlus
             foreach (var item in items)
             {
                 var rowView = new DataGridViewRow();
+                rowView.DefaultCellStyle.BackColor = Color.LightGoldenrodYellow;
+                rowView.HeaderCell.Style.BackColor = Color.LightGoldenrodYellow;
                 rowView.HeaderCell.Value = item;
                 var rowIndex = dumpView.Rows.Add(rowView);
                 var percentRow = dumpView.Rows[rowIndex];
 
                 rowView = new DataGridViewRow();
+                rowView.DefaultCellStyle.BackColor = Color.PaleVioletRed;
                 rowView.HeaderCell.Value = "  售价:";
                 rowIndex = dumpView.Rows.Add(rowView);
                 var salePriceRow = dumpView.Rows[rowIndex];
 
                 rowView = new DataGridViewRow();
+                rowView.DefaultCellStyle.BackColor = Color.PaleVioletRed;
                 rowView.HeaderCell.Value = "  成本:";
                 rowIndex = dumpView.Rows.Add(rowView);
                 var costPriceRow = dumpView.Rows[rowIndex];
@@ -366,6 +372,8 @@ namespace DemosPlus
         #endregion
 
         #region Tool
+
+        private Server CurrentServer => westBtn.Checked ? Server.West : Server.East;
 
         #endregion
 
@@ -408,7 +416,6 @@ namespace DemosPlus
         }
 
         #endregion
-
     }
 
 }

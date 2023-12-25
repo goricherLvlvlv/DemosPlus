@@ -6,6 +6,13 @@ using System.Threading.Tasks;
 
 namespace DemosPlus
 {
+
+    public enum Server
+    { 
+        West,
+        East,
+    }
+
     public enum City
     {
         None,
@@ -14,6 +21,7 @@ namespace DemosPlus
         Martlock,
         Lymhurst,
         FortSterling,
+        Brecilien,
         Caerleon,
         BlackMarket,
     }
@@ -75,6 +83,9 @@ namespace DemosPlus
 
         public const string Url_Prices_Avg = "https://west.albion-online-data.com/api/v2/stats/charts/";
         public const string Url_Buy_Max_Prices = "https://west.albion-online-data.com/api/v2/stats/prices/";
+
+        public const string Url_Prices_Avg_East = "https://east.albion-online-data.com/api/v2/stats/charts/";
+        public const string Url_Buy_Max_Prices_East = "https://east.albion-online-data.com/api/v2/stats/prices/";
     }
 
 }

@@ -97,7 +97,7 @@ namespace DemosPlus.Modules
 
         public List<City> GetCitys()
         {
-            return new List<City> { City.Thetford, City.BridgeWatch, City.Martlock, City.Lymhurst, City.FortSterling, City.Caerleon, City.BlackMarket };
+            return new List<City> { City.Thetford, City.BridgeWatch, City.Martlock, City.Lymhurst, City.FortSterling, City.Brecilien, City.Caerleon, City.BlackMarket };
         }
 
         public string GetItem(string itemKey, int tier, int enchant)

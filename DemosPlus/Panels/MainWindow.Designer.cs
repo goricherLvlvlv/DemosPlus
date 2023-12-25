@@ -47,12 +47,16 @@ namespace DemosPlus
             this.txtSaleMode = new System.Windows.Forms.Label();
             this.dropSaleMode = new System.Windows.Forms.ComboBox();
             this.txtItemName = new System.Windows.Forms.Label();
+            this.westBtn = new System.Windows.Forms.RadioButton();
+            this.eastBtn = new System.Windows.Forms.RadioButton();
+            this.panel1 = new System.Windows.Forms.Panel();
             ((System.ComponentModel.ISupportInitialize)(this.dumpView)).BeginInit();
+            this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
             // btnRun
             // 
-            this.btnRun.Location = new System.Drawing.Point(179, 256);
+            this.btnRun.Location = new System.Drawing.Point(188, 292);
             this.btnRun.Name = "btnRun";
             this.btnRun.Size = new System.Drawing.Size(75, 23);
             this.btnRun.TabIndex = 0;
@@ -63,7 +67,7 @@ namespace DemosPlus
             // dropDuration
             // 
             this.dropDuration.FormattingEnabled = true;
-            this.dropDuration.Location = new System.Drawing.Point(133, 90);
+            this.dropDuration.Location = new System.Drawing.Point(142, 126);
             this.dropDuration.Name = "dropDuration";
             this.dropDuration.Size = new System.Drawing.Size(121, 20);
             this.dropDuration.TabIndex = 2;
@@ -73,7 +77,7 @@ namespace DemosPlus
             this.txtDuration.AutoSize = true;
             this.txtDuration.Font = new System.Drawing.Font("Microsoft YaHei", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.txtDuration.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.txtDuration.Location = new System.Drawing.Point(25, 90);
+            this.txtDuration.Location = new System.Drawing.Point(34, 126);
             this.txtDuration.Name = "txtDuration";
             this.txtDuration.Size = new System.Drawing.Size(69, 20);
             this.txtDuration.TabIndex = 3;
@@ -85,7 +89,7 @@ namespace DemosPlus
             this.label3.AutoSize = true;
             this.label3.Font = new System.Drawing.Font("Microsoft YaHei", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.label3.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.label3.Location = new System.Drawing.Point(25, 120);
+            this.label3.Location = new System.Drawing.Point(34, 156);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(69, 20);
             this.label3.TabIndex = 7;
@@ -95,7 +99,7 @@ namespace DemosPlus
             // dropItem
             // 
             this.dropItem.FormattingEnabled = true;
-            this.dropItem.Location = new System.Drawing.Point(133, 120);
+            this.dropItem.Location = new System.Drawing.Point(142, 156);
             this.dropItem.Name = "dropItem";
             this.dropItem.Size = new System.Drawing.Size(121, 20);
             this.dropItem.TabIndex = 6;
@@ -106,7 +110,7 @@ namespace DemosPlus
             this.txtTax.AutoSize = true;
             this.txtTax.Font = new System.Drawing.Font("Microsoft YaHei", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.txtTax.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.txtTax.Location = new System.Drawing.Point(25, 150);
+            this.txtTax.Location = new System.Drawing.Point(34, 186);
             this.txtTax.Name = "txtTax";
             this.txtTax.Size = new System.Drawing.Size(69, 20);
             this.txtTax.TabIndex = 9;
@@ -116,7 +120,7 @@ namespace DemosPlus
             // dropTax
             // 
             this.dropTax.FormattingEnabled = true;
-            this.dropTax.Location = new System.Drawing.Point(133, 150);
+            this.dropTax.Location = new System.Drawing.Point(142, 186);
             this.dropTax.Name = "dropTax";
             this.dropTax.Size = new System.Drawing.Size(121, 20);
             this.dropTax.TabIndex = 8;
@@ -126,7 +130,7 @@ namespace DemosPlus
             this.txtReturn.AutoSize = true;
             this.txtReturn.Font = new System.Drawing.Font("Microsoft YaHei", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.txtReturn.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.txtReturn.Location = new System.Drawing.Point(25, 210);
+            this.txtReturn.Location = new System.Drawing.Point(34, 246);
             this.txtReturn.Name = "txtReturn";
             this.txtReturn.Size = new System.Drawing.Size(84, 20);
             this.txtReturn.TabIndex = 11;
@@ -135,7 +139,7 @@ namespace DemosPlus
             // 
             // inputReturn
             // 
-            this.inputReturn.Location = new System.Drawing.Point(133, 210);
+            this.inputReturn.Location = new System.Drawing.Point(142, 246);
             this.inputReturn.Name = "inputReturn";
             this.inputReturn.Size = new System.Drawing.Size(121, 21);
             this.inputReturn.TabIndex = 12;
@@ -155,7 +159,7 @@ namespace DemosPlus
             // resourceTab
             // 
             this.resourceTab.AutoSize = true;
-            this.resourceTab.Location = new System.Drawing.Point(29, 32);
+            this.resourceTab.Location = new System.Drawing.Point(38, 68);
             this.resourceTab.Name = "resourceTab";
             this.resourceTab.Size = new System.Drawing.Size(71, 16);
             this.resourceTab.TabIndex = 15;
@@ -167,7 +171,7 @@ namespace DemosPlus
             // costTab
             // 
             this.costTab.AutoSize = true;
-            this.costTab.Location = new System.Drawing.Point(29, 54);
+            this.costTab.Location = new System.Drawing.Point(38, 90);
             this.costTab.Name = "costTab";
             this.costTab.Size = new System.Drawing.Size(71, 16);
             this.costTab.TabIndex = 16;
@@ -179,7 +183,7 @@ namespace DemosPlus
             // profitTab
             // 
             this.profitTab.AutoSize = true;
-            this.profitTab.Location = new System.Drawing.Point(106, 54);
+            this.profitTab.Location = new System.Drawing.Point(115, 90);
             this.profitTab.Name = "profitTab";
             this.profitTab.Size = new System.Drawing.Size(71, 16);
             this.profitTab.TabIndex = 17;
@@ -191,7 +195,7 @@ namespace DemosPlus
             // artifactTab
             // 
             this.artifactTab.AutoSize = true;
-            this.artifactTab.Location = new System.Drawing.Point(106, 32);
+            this.artifactTab.Location = new System.Drawing.Point(115, 68);
             this.artifactTab.Name = "artifactTab";
             this.artifactTab.Size = new System.Drawing.Size(71, 16);
             this.artifactTab.TabIndex = 18;
@@ -203,7 +207,7 @@ namespace DemosPlus
             // gearTab
             // 
             this.gearTab.AutoSize = true;
-            this.gearTab.Location = new System.Drawing.Point(183, 32);
+            this.gearTab.Location = new System.Drawing.Point(192, 68);
             this.gearTab.Name = "gearTab";
             this.gearTab.Size = new System.Drawing.Size(71, 16);
             this.gearTab.TabIndex = 19;
@@ -217,7 +221,7 @@ namespace DemosPlus
             this.txtSaleMode.AutoSize = true;
             this.txtSaleMode.Font = new System.Drawing.Font("Microsoft YaHei", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
             this.txtSaleMode.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.txtSaleMode.Location = new System.Drawing.Point(25, 180);
+            this.txtSaleMode.Location = new System.Drawing.Point(34, 216);
             this.txtSaleMode.Name = "txtSaleMode";
             this.txtSaleMode.Size = new System.Drawing.Size(69, 20);
             this.txtSaleMode.TabIndex = 21;
@@ -227,7 +231,7 @@ namespace DemosPlus
             // dropSaleMode
             // 
             this.dropSaleMode.FormattingEnabled = true;
-            this.dropSaleMode.Location = new System.Drawing.Point(133, 180);
+            this.dropSaleMode.Location = new System.Drawing.Point(142, 216);
             this.dropSaleMode.Name = "dropSaleMode";
             this.dropSaleMode.Size = new System.Drawing.Size(121, 20);
             this.dropSaleMode.TabIndex = 20;
@@ -243,11 +247,41 @@ namespace DemosPlus
             this.txtItemName.TabIndex = 22;
             this.txtItemName.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
+            // westBtn
+            // 
+            this.westBtn.Location = new System.Drawing.Point(0, 3);
+            this.westBtn.Name = "westBtn";
+            this.westBtn.Size = new System.Drawing.Size(95, 16);
+            this.westBtn.TabIndex = 0;
+            this.westBtn.TabStop = true;
+            this.westBtn.Text = "国际服";
+            this.westBtn.UseVisualStyleBackColor = true;
+            // 
+            // eastBtn
+            // 
+            this.eastBtn.Location = new System.Drawing.Point(101, 3);
+            this.eastBtn.Name = "eastBtn";
+            this.eastBtn.Size = new System.Drawing.Size(95, 16);
+            this.eastBtn.TabIndex = 0;
+            this.eastBtn.TabStop = true;
+            this.eastBtn.Text = "亚服";
+            this.eastBtn.UseVisualStyleBackColor = true;
+            // 
+            // panel1
+            // 
+            this.panel1.Controls.Add(this.eastBtn);
+            this.panel1.Controls.Add(this.westBtn);
+            this.panel1.Location = new System.Drawing.Point(38, 32);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(225, 21);
+            this.panel1.TabIndex = 24;
+            // 
             // MainWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1326, 644);
+            this.Controls.Add(this.panel1);
             this.Controls.Add(this.txtItemName);
             this.Controls.Add(this.txtSaleMode);
             this.Controls.Add(this.dropSaleMode);
@@ -269,6 +303,7 @@ namespace DemosPlus
             this.Name = "MainWindow";
             this.Text = "主页";
             ((System.ComponentModel.ISupportInitialize)(this.dumpView)).EndInit();
+            this.panel1.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -294,6 +329,9 @@ namespace DemosPlus
         private System.Windows.Forms.Label txtSaleMode;
         private System.Windows.Forms.ComboBox dropSaleMode;
         private System.Windows.Forms.Label txtItemName;
+        private System.Windows.Forms.RadioButton westBtn;
+        private System.Windows.Forms.RadioButton eastBtn;
+        private System.Windows.Forms.Panel panel1;
     }
 }
 

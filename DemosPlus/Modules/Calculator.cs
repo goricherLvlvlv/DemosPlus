@@ -18,12 +18,12 @@ namespace DemosPlus.Modules
 
         #region Interface
 
-        public Dictionary<(string item, City city), (double percent, double salePrice, double costPrice, int number)> CalProfit(string itemKey, SaleMode mode, double returnRate, Duration duration = Duration.SevenDays, Tax tax = Tax.Tax_6_26)
+        public Dictionary<(string item, City city), (double percent, double salePrice, double costPrice, int number)> CalProfit(Server server, string itemKey, SaleMode mode, double returnRate, Duration duration = Duration.SevenDays, Tax tax = Tax.Tax_6_26)
         {
-            var cost = QCalculator.Instance.CalCost(itemKey, returnRate, duration);
+            var cost = QCalculator.Instance.CalCost(server, itemKey, returnRate, duration);
             var prices = mode == SaleMode.SellOrder ?
-                QCalculator.Instance.GetAvgPrices(itemKey, duration) :
-                QCalculator.Instance.GetBuyMaxPrices(itemKey, duration);
+                QCalculator.Instance.GetAvgPrices(server, itemKey, duration) :
+                QCalculator.Instance.GetBuyMaxPrices(server, itemKey, duration);
 
             var citys = QExcelUtil.Instance.GetCitys();
             var taxPercent = QExcelUtil.Instance.GetTax(tax);
@@ -71,7 +71,7 @@ namespace DemosPlus.Modules
         /// <summary>
         /// 计算某一类道具的成本
         /// </summary>
-        public Dictionary<string, List<double>> CalCost(string itemKey, double returnRate, Duration duration = Duration.SevenDays)
+        public Dictionary<string, List<double>> CalCost(Server server, string itemKey, double returnRate, Duration duration = Duration.SevenDays)
         {
             var config = QExcelUtil.Instance.GetConfig(itemKey);
             if (config.crafts == null || config.crafts.Count <= 0)
@@ -93,7 +93,7 @@ namespace DemosPlus.Modules
                         continue;
                     }
 
-                    AppendItemKeyPrices(duration, resourceItemKey, ref prices);
+                    AppendItemKeyPrices(server, duration, resourceItemKey, ref prices);
                     pricesCache.Add(resourceItemKey);
                 }
             }
@@ -139,7 +139,7 @@ namespace DemosPlus.Modules
         /// <summary>
         /// 获取 道具, 城市 二维直接出售价格表
         /// </summary>
-        public Dictionary<(string item, City city), (double price, int number)> GetBuyMaxPrices(string itemKey, Duration duration)
+        public Dictionary<(string item, City city), (double price, int number)> GetBuyMaxPrices(Server server, string itemKey, Duration duration)
         {
             var items = QExcelUtil.Instance.GetItems(itemKey);
             if (items == null || items.Count <= 0)
@@ -150,7 +150,7 @@ namespace DemosPlus.Modules
             var (startDate, endDate) = GetUrlDate(duration);
             var quality = Quality.None;
             var citys = QExcelUtil.Instance.GetCitys();
-            var url = QUrlManager.Instance.GetBuyMaxPricesUrl(items, citys, startDate, endDate, quality);
+            var url = QUrlManager.Instance.GetBuyMaxPricesUrl(server, items, citys, startDate, endDate, quality);
             var result = QNetwork.Instance.GetResult(url);
             var buyMaxPrices = QJsonManager.Instance.GetBuyMaxPrices(result);
             buyMaxPrices.Sort((a, b) =>
@@ -171,7 +171,7 @@ namespace DemosPlus.Modules
         /// <summary>
         /// 获取 道具, 城市 二维价格表
         /// </summary>
-        public Dictionary<(string item, City city), (double price, int number)> GetAvgPrices(string itemKey, Duration duration)
+        public Dictionary<(string item, City city), (double price, int number)> GetAvgPrices(Server server, string itemKey, Duration duration)
         {
             var items = QExcelUtil.Instance.GetItems(itemKey);
             if (items == null || items.Count <= 0)
@@ -182,7 +182,7 @@ namespace DemosPlus.Modules
             var (startDate, endDate) = GetUrlDate(duration);
             var quality = Quality.None;
             var citys = QExcelUtil.Instance.GetCitys();
-            var url = QUrlManager.Instance.GetPricesAvgUrl(items, citys, startDate, endDate, quality);
+            var url = QUrlManager.Instance.GetPricesAvgUrl(server, items, citys, startDate, endDate, quality);
             var result = QNetwork.Instance.GetResult(url);
             var avgList = QJsonManager.Instance.GetPricesAvg(result);
             avgList.Sort((a, b) =>
@@ -203,7 +203,7 @@ namespace DemosPlus.Modules
         /// <summary>
         /// 获取该类型所有物品的均价
         /// </summary>
-        public Dictionary<string, ItemAvgPrice> GetTypePrices(Duration duration, ItemType type)
+        public Dictionary<string, ItemAvgPrice> GetTypePrices(Server server, Duration duration, ItemType type)
         {
             var (startDate, endDate) = GetUrlDate(duration);
             var quality = Quality.None;
@@ -220,7 +220,7 @@ namespace DemosPlus.Modules
                     continue;
                 }
 
-                var url = QUrlManager.Instance.GetPricesAvgUrl(items, citys, startDate, endDate, quality);
+                var url = QUrlManager.Instance.GetPricesAvgUrl(server, items, citys, startDate, endDate, quality);
                 var result = QNetwork.Instance.GetResult(url);
                 var avgList = QJsonManager.Instance.GetPricesAvg(result);
                 ProcessAvg_ForCost(ref res, avgList);
@@ -233,7 +233,7 @@ namespace DemosPlus.Modules
         /// <summary>
         /// 获得该itemKey所有阶级/附魔的价格
         /// </summary>
-        public void AppendItemKeyPrices(Duration duration, string itemKey, ref Dictionary<string, ItemAvgPrice> res)
+        public void AppendItemKeyPrices(Server server, Duration duration, string itemKey, ref Dictionary<string, ItemAvgPrice> res)
         {
             var (startDate, endDate) = GetUrlDate(duration);
             var quality = Quality.None;
@@ -245,7 +245,7 @@ namespace DemosPlus.Modules
                 return;
             }
 
-            var url = QUrlManager.Instance.GetPricesAvgUrl(items, citys, startDate, endDate, quality);
+            var url = QUrlManager.Instance.GetPricesAvgUrl(server, items, citys, startDate, endDate, quality);
             var result = QNetwork.Instance.GetResult(url);
             var avgList = QJsonManager.Instance.GetPricesAvg(result);
             ProcessAvg_ForCost(ref res, avgList);
@@ -273,7 +273,7 @@ namespace DemosPlus.Modules
                 return City.None;
             }
 
-            if (Enum.TryParse<City>(name, true, out var city))
+            if (Enum.TryParse<City>(name, true, out var city) && Enum.IsDefined(typeof(City), city))
             {
                 return city;
             }
@@ -295,6 +295,10 @@ namespace DemosPlus.Modules
             else if (name.Equals("Black Market", StringComparison.OrdinalIgnoreCase))
             {
                 return City.BlackMarket;
+            }
+            else if (name.Equals("5003", StringComparison.OrdinalIgnoreCase))
+            {
+                return City.Brecilien;
             }
 
             return City.None;
